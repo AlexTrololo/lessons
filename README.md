@@ -79,8 +79,7 @@
 
 **34.** [Работа с датами и временем](lessons%2Fjava-core%2F34%2FWorking%20with%20dates%20and%20times.md)
 
-**38.** [Механизмы сравнения. _Comparable_ и _Comparator_](lessons%2Fjava-core%2F38%2F%CC%E5%F5%E0%ED%E8%E7%EC%FB%20%F1%F0%E0%E2%ED%E5%ED%E8%FF.%20Comparable%20%E8%20Comparator.md)
-
+**38.** [Механизмы сравнения. _Comparable_ и _Comparator_](lessons%2Fjava-core%2F38%2FComparison%20mechanisms.%20Comparable%20and%20Comparator.md)
 
 ### Объектно-ориентированное программирование
 

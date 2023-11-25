@@ -55,7 +55,7 @@ January 14, 2023
 
 Переходим к практике:
 
-#### Задача 1:
+### Задача 1:
 
 Используя классы-сущности из  [задачи к уроку 21](https://github.com/KFalcon2022/practical-tasks/tree/master/src/com/walking/lesson21_immutable_object/model) реализуйте сортировку машин по:
 
@@ -69,7 +69,7 @@ January 14, 2023
 
 Используйте список для хранения и сортировки коллекции машин.
 
-#### Задача 2:
+### Задача 2:
 
 Используя классы-сущности из  [задачи к уроку 21](https://github.com/KFalcon2022/practical-tasks/tree/master/src/com/walking/lesson21_immutable_object/model) имплементируйте _Comparable_ для _Car_ таким образом, чтобы машины сравнивались по полю _identifier_. Объекты _CarIdentifier_ предлагаю сравнивать по номеру и году (если номера почему-то совпали).
 

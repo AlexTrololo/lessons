@@ -101,6 +101,7 @@ SOLID и другие принципы ОО-дизайна
 
 **37.** [_Collection_. Список. _ArrayList_](lessons%2Fcollections-framework%2F37%2FCollection.%20List.%20ArrayList.md)
 
+**40.** [Queue и вариации на тему. Часть I. Структуры данных](lessons%2Fcollections-framework%2F40%2FQueue%20and%20variations%20on%20a%20theme.%20Part%20I%20Data%20Structures.md)
 **40.** [_Queue_. Имплементации в Java](lessons%2Fcollections-framework%2F40%2FQueue.%20Implementations%20in%20Java.md)
 
 **41.** [_Set_. Первое знакомство](lessons%2Fcollections-framework%2F41%2FSet.%20First%20meeting.md)

@@ -1,15 +1,6 @@
-Функциональные интерфейсы в коллекциях. Итоги раздела ФП – Telegraph
-
 Функциональные интерфейсы в коллекциях. Итоги раздела ФП
 ========================================================
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)March 22, 2023
-
-Функциональные интерфейсы в коллекциях. Итоги раздела ФП
-
-===========================================================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 Сегодняшний урок будет заключительным в разделе «Функциональное программирование в Java». И его мы разделим на две части.
 
@@ -24,9 +15,9 @@
 
 ### Функциональный интерфейсы в коллекциях
 
-###  Iterable
+### Iterable
 
-#### void forEach(Consumer<T> action)\*
+### void forEach(Consumer<T> action)\*
 
 > \*Здесь и ниже, в параметризованных методах опущены ограниченные вайлдкарды. Это не мешает восприятию параметров, но делает заголовки более читабельными. Иными словами, в рамках статьи:  
 > **<? extends T> -> <T>**,  
@@ -36,54 +27,58 @@
 
 ### Collection
 
-#### T\[\] toArray(IntFunction<T\[\]> generator)
+### T\[\] toArray(IntFunction<T\[\]> generator)
 
 Аналогичен схожему методу в _Stream_. По лямбда-выражению, переданному параметром, создает массив нужного типа, содержащий все элементы коллекции.
 
-#### boolean removeIf(Predicate<E> filter)
+### boolean removeIf(Predicate<E> filter)
 
 Один из действительно новых для нас методов. Удаляет все элементы в коллекции, для которых лямбда-выражение, переданное параметром, возвращает _true_. Таким образом, предлагает намного более гибкий и удобный функционал, чем классический _remove()_.
 
 **Пример**. Удалим из коллекции целых чисел все четные:
 
+```java
 var list = new ArrayList<>(List.of(1, 2, 3, 4));
 list.removeIf(i -> i % 2 == 0);
 list.forEach(System.out::print); //13
-
-
+```
 
 ### List
 
-#### void replaceAll(UnaryOperator<E> operator)
+### void replaceAll(UnaryOperator<E> operator)
 
 Заменяет все элементы списка в соответствии с переданной лямбдой.
 
 **Пример 1**. Увеличим все элементы списка целых чисел на единицу:
 
+```java
 var list = new ArrayList<>(List.of(1, 2, 3, 4));
 list.replaceAll(i -> ++i);
 list.forEach(System.out::print); //2345
+```
 
-**Пример 2**.   Увеличим только четные элементы списка целых чисел на единицу:
+**Пример 2**.  Увеличим только четные элементы списка целых чисел на единицу:
 
+```java
 var list = new ArrayList<>(List.of(1, 2, 3, 4));
 list.replaceAll(i -> i % 2 == 0 ? ++i : i);
 list.forEach(System.out::print); //1335
+```
 
 
-
-#### void sort(Comparator<E> c)
+### void sort(Comparator<E> c)
 
 Уже известный нам метод сортировки списка. Но т.к. тоже принимает параметром лямбда-выражение – упомянут здесь.
 
 ### Map
 
-#### void forEach(BiConsumer<K, V> action)
+### void forEach(BiConsumer<K, V> action)
 
 Метод, по назначению совпадающий с _forEach()_ в _Iterable_, но с отличающейся сигнатурой. В случае с _Map_, данный метод работает с лямбдой, имеющей два параметра – ассоциированные с ключом и значением соответственно.
 
 **Пример**. Выведем конкатенацию ключей и значений в мапе, разделяя разные пары пробелом:
 
+```java
 var map = new HashMap<Integer, String>();
 map.put(1, "a");
 map.put(2, "b");
@@ -91,15 +86,16 @@ map.put(3, "c");
 map.put(4, "d");
 
 map.forEach((k, v) -> System.out.print(k + v + " ")); //1a 2b 3c 4d
+```
 
 
-
-#### void replaceAll(BiFunction< K, V, V> function)
+### void replaceAll(BiFunction< K, V, V> function)
 
 Метод схож с _replaceAll()_ для списка. Принимает параметром лямбда-выражение (входные параметры – ключ и значение), результат выражения – измененное значение для ключа.
 
 Доработаем **пример** выше. Если значение ключа – четное, значение должно замениться на конкатенацию двух изначальных значений:
 
+```java
 var map = new HashMap<Integer, String>();
 map.put(1, "a");
 map.put(2, "b");
@@ -108,8 +104,9 @@ map.put(4, "d");
 
 map.replaceAll((k, v) -> k % 2 == 0 ? v + v : v);
 map.forEach((k, v) -> System.out.print(k + v + " ")); // 1a 2bb 3c 4dd
+```
 
-#### V compute(K key, BiFunction<K, V, V> remappingFunction)
+### V compute(K key, BiFunction<K, V, V> remappingFunction)
 
 Метод _compute()_ позволяет изменить значение по заданному ключу. Отдаленно похож на _replaceAll()_. Но если последний меняет (позволяет изменить) все значения в мапе, то _compute()_ – только для заданного ключа.
 
@@ -117,15 +114,16 @@ map.forEach((k, v) -> System.out.print(k + v + " ")); // 1a 2bb 3c 4dd
 
 Важная особенность метода заключается в том, что если ключа, переданного первым параметром, не существует, лямбда-выражение все равно попытается отработать. При этом параметр, отвечающий за _value_ будет иметь значение _null_. Таким образом, в результате может как появиться новая пара ключ-значение в мапе, так и упасть _NPE_:
 
+```java
 var map = new HashMap<Integer, String>();
 map.compute(1, (k, v) -> v + v); // мапа теперь содержит пару key=1,
 // value="nullnull"
 map.compute(2, (k, v) -> v.getClass().toString()); // NPE – нельзя
 // вызвать getClass() у null
+```
 
 
-
-#### V computeIfAbsent(K key, Function<K, V> mappingFunction)
+### V computeIfAbsent(K key, Function<K, V> mappingFunction)
 
 Похож на _compute()_, но лямбда-выражение будет вызвано только если в данный момент отсутствует значение по текущему ключу.
 
@@ -135,48 +133,51 @@ map.compute(2, (k, v) -> v.getClass().toString()); // NPE – нельзя
 
 **Пример**. Допустим, мы имеем список чисел и нам требуется представить его как _Map<Boolean, List<Integer>>_, разделив по четности. Мы можем без особых проблем решить данную задачу через Stream API. Но как будет выглядеть ее решение с использованием только методов коллекций?
 
+```java
 Map<Boolean, List<Integer>> intsByParity = new HashMap<>();
 
 List.of(1, 2, 3, 4)
-.forEach(i -> {
-if (i % 2 == 0) {
-//Если список четных не существует - создаем его
-intsByParity.computeIfAbsent(true, k -> new ArrayList<>())
-.add(i); // добавляем элемент
-} else {
-//Если список нечетных не существует - создаем его
-intsByParity.computeIfAbsent(false, k -> new ArrayList<>())
-.add(i); // добавляем элемент
-}
+    .forEach(i -> {
+    if (i % 2 == 0) {
+        //Если список четных не существует - создаем его
+        intsByParity.computeIfAbsent(true, k -> new ArrayList<>())
+            .add(i); // добавляем элемент
+    } else {
+        //Если список нечетных не существует - создаем его
+        intsByParity.computeIfAbsent(false, k -> new ArrayList<>())
+            .add(i); // добавляем элемент
+    }
 });
 
 System.out.println(intsByParity); //{false=\[1, 3\], true=\[2, 4\]}
+```
 
 Впрочем, для задачи, описанной выше, рекомендую использовать Stream API. Хотя сама концепция задачи встречается достаточно часто и периодически решается примерно так, как показано выше. Иногда это связано с неумением использовать Collector’ы, иногда – с какими-то более объективными причинами, по которым решено написать решение в практически императивном стиле. В последнем случае, зачастую, _forEach()_ будет заменен на полноценный цикл.
 
-#### V computeIfPresent(K key, BiFunction<K, V, V> remappingFunction)
+### V computeIfPresent(K key, BiFunction<K, V, V> remappingFunction)
 
 Думаю, вы уже догадались, в чем суть. _compute()_, который отработает только для существующих пар ключ-значение. Более того, если результатом лямбда-выражения из параметра окажется _null_ – пара с данным ключом будет удалена.
 
 Пару очевидных примеров:
 
+```java
 Map<Integer, String> map = new HashMap<>();
 map.put(1, "a");
 map.put(2, "b");
 
-map.computeIfPresent(1, (k, v) -> v + v); // key=1, value="aa"
+map.computeIfPresent(1, (k, v) -> v + v);   // key=1, value="aa"
 
-map.computeIfPresent(2, (k, v) -> null);  // пара с ключом 2 удалена
+map.computeIfPresent(2, (k, v) -> null);    // пара с ключом 2 удалена
 
-map.computeIfPresent(3, (k, v) -> v + v); // по ключу 3 не существует
-// значения, лямбда не будет
-// вызвана
+map.computeIfPresent(3, (k, v) -> v + v);   // по ключу 3 не существует
+                                            // значения, лямбда не будет
+                                            // вызвана
 
 map.forEach((k, v) -> System.out.print(k + v + " ")); // 1aa
+```
 
 
-
-#### V merge(K key, V value, BiFunction<V, V, V> remappingFunction)
+### V merge(K key, V value, BiFunction<V, V, V> remappingFunction)
 
 Данный метод был упомянут [при разборе Collector’а _toMap()_](/Stream-API-collect-Collector-Collectors-03-17#toMap()).
 
@@ -196,11 +197,15 @@ sumMap.put(someKey, sumMap.get(someKey) + newSum);
 
 Можно вспомнить про _compute()_ и написать что-то вроде этого:
 
+```java
 sumMap.compute(someKey, (k, v) -> v == null ? newSum : v + newSum);
+```
 
 Но, в конечном итоге, можно использовать _merge()_:
 
+```java
 sumMap.merge(someKey, newSum, (oSum, nSum) -> oSum + nSum);
+```
 
 Результат будет аналогичен предыдущему, но лаконичнее и без ручных проверок на _null_.
 
@@ -208,7 +213,7 @@ sumMap.merge(someKey, newSum, (oSum, nSum) -> oSum + nSum);
 
 На этом мы завершаем разбор использования функциональных интерфейсов в коллекциях.
 
-#### Итоги раздела ФП или «есть ли жизнь после Stream API?»
+### Итоги раздела ФП или «есть ли жизнь после Stream API?»
 
 В данном пункте нас ждет две новости: хорошая и многообещающая.
 
@@ -238,26 +243,23 @@ sumMap.merge(someKey, newSum, (oSum, nSum) -> oSum + nSum);
 
 С теорией на сегодня все!
 
-![](/file/60ed17608e3a3ba0c1a15.png)
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 Переходим к практике. Не используйте Stream API для решения описанных задач:
 
-#### Задача 1
+### Задача 1
 
-Используя классы из практики к [уроку 57](/Stream-API-collect-Collector-Collectors-Praktika-03-17), реализуйте метод, принимающий на вход список сотрудников и возвращающий самого старшего обладателя каждого имени.
-
-
-
-#### Задача 2
-
-Используя классы из практики к [уроку 57](/Stream-API-collect-Collector-Collectors-Praktika-03-17), реализуйте метод, принимающий на вход список сотрудников и возвращающий список обладателей каждого имени.
+Используя классы из практики к [уроку 57](..%2F..%2Ffunctional-programming-in-java%2F57%2FStream%20API.%20collect%28%29%2C%20Collector%2C%20Collectors.%20Practice.md), реализуйте метод, принимающий на вход список сотрудников и возвращающий самого старшего обладателя каждого имени.
 
 
+### Задача 2
 
-#### Задача 3
+Используя классы из практики к [уроку 57](..%2F..%2Ffunctional-programming-in-java%2F57%2FStream%20API.%20collect%28%29%2C%20Collector%2C%20Collectors.%20Practice.md), реализуйте метод, принимающий на вход список сотрудников и возвращающий список обладателей каждого имени.
 
-Используя классы из практики к [уроку 57](/Stream-API-collect-Collector-Collectors-Praktika-03-17), реализуйте метод, принимающий на вход список сотрудников и возвращающий суммарный возраст обладателей каждого имени. Не используйте _Map.merge()_.
 
+### Задача 3
+
+Используя классы из практики к [уроку 57](..%2F..%2Ffunctional-programming-in-java%2F57%2FStream%20API.%20collect%28%29%2C%20Collector%2C%20Collectors.%20Practice.md), реализуйте метод, принимающий на вход список сотрудников и возвращающий суммарный возраст обладателей каждого имени. Не используйте _Map.merge()_.
 
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
@@ -267,18 +269,3 @@ sumMap.merge(someKey, newSum, (oSum, nSum) -> oSum + nSum);
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#7c18111f1d3c081910191b0e1d1152130e1b430f091e16191f08412e190c130e08594e4c0813594e4c281910191b0e1d0c14594e4c0c1d1b19594e4c594e4e59384c593d4859384d59444f59384c593e3859384c593e3d59384d59444a59384c593e4459384c593e3959384c593e3859384c593e4c59384c593e3e59384d59443f59384c593e3859384d59443e59384c593e49594e4c59384c593e4459384c593e3859384d59444e59384c593e4959384d59444c59384d59444859384c593e4959384c593e4559384d59444d59384d59443e594e4c59384c593e4e594e4c59384c593e3d59384c593e3959384c593e3e59384c593e3e59384c593e4959384c593e3d59384d59444a59384c593e4459384d59443a59384d59444952594e4c59384c59454459384d59444e59384c593e3959384c593e4f59384c593e44594e4c59384d59444c59384c593e4c59384c593e4b59384c593e4859384c593e4959384c593e3e59384c593e4c594e4c59384c593d4859384c59453a594e4e5a1e131805412e190c130e081918594e4c0c1d1b19594f3d594e4c1408080c0f594f3d594e3a594e3a081910191b0e1d520c14594e3a3a0912171f1513121d1012051951151208190e1a19160f05510a511713101019171f15051d14513508131b15510e1d061819101d513a2c514c4f514e4e594c3d594c3d594c3d)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1679525367,"pageId":"32eaaa2c8e72ad571ab99","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

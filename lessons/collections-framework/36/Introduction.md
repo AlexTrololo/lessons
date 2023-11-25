@@ -1,17 +1,7 @@
-Collections Framework – Telegraph
-
 Collections Framework
 =====================
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)January 10, 2023
-
-Collections Framework
-
-========================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
-
-#### Первое знакомство с коллекциями
+### Первое знакомство с коллекциями
 
 Сегодня мы начинаем разбор достаточно большой темы коллекций в Java и познакомимся с основными иерархиями коллекций, разберем их актуальность, классифицируем по нескольким признакам и поверхностно затронем отличия коллекций разных типов.
 
@@ -34,7 +24,7 @@ Collections Framework
 
 
 
-#### Массивы и коллекции
+### Массивы и коллекции
 
 Первая информация однозначно вызывает ассоциации с массивами. Постараемся понять, в чем заключаются основные отличия:
 
@@ -45,14 +35,14 @@ Collections Framework
 
 
 
-#### Иерархии коллекций
+### Иерархии коллекций
 
 С точки зрения иерархии классов в рамках **Collections Framework** нас будут интересовать интерфейсы _Iterable<T>_ (особенно его наследник _Collection<T>_) и _Map<K, V>_.
 
 Рассмотрим иерархии этих интерфейсов, используя рисунок ниже (голубые – интерфейсы, зеленые - классы):
 
-![](/file/8c20cba44a94b4613e3c9.png)
 
+![36_tree.png](..%2F..%2F..%2Ffile%2F36_tree.png)
 Что стоит отметить:
 
 *   3 наследника _Collection_ – 3 разных типа коллекций: _List_, _Queue_, _Set_;
@@ -72,8 +62,7 @@ Collections Framework
 Возможно, сейчас вопросов все еще больше, чем ответов. Не стоит бояться, мы разберем каждый из типов подробно в рамках следующих уроков.
 
 
-
-#### Классификация коллекций по потокобезопасности
+### Классификация коллекций по потокобезопасности
 
 **Потокобезопасность** – концепция, гарантирующая исправность и предсказуемость поведения кода в многопоточной среде. Намного подробнее этот термин будет разбираться в теме многопоточности.
 
@@ -84,15 +73,13 @@ Collections Framework
 *   Потокобезопасные коллекции (_java.util.concurrent_). «Современные» потокобезопасные коллекции. Лежат в пакете _java.util.concurrent_. Реализованы более оптимально, чем legacy-коллекции, именно они используются, если предполагается, что код будет использоваться в многопоточном режиме.
 
 
-
 Умение правильно выбирать коллекцию, исходя из потребностей, и использовать ее оптимально – крайне важный навык Java-разработчика. Для этого, в том числе, стоит представлять основы внутреннего устройства конкретных реализаций и учитывать, какие структуры данных лежат в основе той или иной коллекции.
-
 
 
 На сегодня все!
 
-![](/file/17c190f2df398a1705f46.png)
 
+![road_map.png](..%2F..%2F..%2Ffile%2end_of_the_lesson.png)
 
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
@@ -102,18 +89,3 @@ Collections Framework
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#d6b2bbb5b796a2b3bab3b1a4b7bbf8b9a4b1e9a5a3b4bcb3b5a2eb84b3a6b9a4a2f3e4e6a2b9f3e4e682b3bab3b1a4b7a6bef3e4e6a6b7b1b3f3e4e6f3e4e495b9babab3b5a2bfb9b8a5f3e4e690a4b7bbb3a1b9a4bdf3e4e4f0b4b9b2afeb84b3a6b9a4a2b3b2f3e4e6a6b7b1b3f3e597f3e4e6bea2a2a6a5f3e597f3e490f3e490a2b3bab3b1a4b7f8a6bef3e49095b9babab3b5a2bfb9b8a5fb90a4b7bbb3a1b9a4bdfbe6e7fbe7e6f3e697f3e697f3e697)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1673332800,"pageId":"95d11476f224104d1118e","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

@@ -1,14 +1,5 @@
-Ссылка на метод – Telegraph
-
 Ссылка на метод
 ===============
-
-February 12, 2023
-
-Ссылка на метод
-
-==================
-
 
 
 Вместе с лямбда-выражениями, рассмотренными в рамках предыдущего урока, Java 8 привнесла еще один механизм, позволяющий писать код лаконично – **method reference** (**ссылка на метод**). Отмечу, что почти не встречал в живой коммуникации русского варианта этого термина. Видимо, не прижился. По крайней мере, в моем окружении.
@@ -16,8 +7,7 @@ February 12, 2023
 Мы совсем поверхностно коснулись существования такой языковой конструкции в прошлом уроке, более детально постараемся разобраться в рамках текущего.
 
 
-
-#### Что такое ссылка на метод?
+### Что такое ссылка на метод?
 
 **Method reference** – языковая конструкция в Java, позволяющая упрощать запись лямбда-выражений. Таким образом, это следующий уровень оптимизации кодовой базы при работе с функциональными интерфейсами:
 
@@ -27,29 +17,28 @@ _анонимный класс → лямбда-выражение → method re
 
 > **!NB**: как и с переходом от анонимного класса к лямбда-выражению, обычно IDEA подсвечивает лямбды, которые можно свернуть до method reference. И даже предложит сделать это за вас:  
 > → курсор в область предупреждения (часть кода, выделенного желтым);  
-> → **alt+Enter** для появления выпадающего списка;  
+> →**alt+Enter** для появления выпадающего списка;  
 > → как правило, первый пункт – «Replace lambda with method reference»;  
 > → Enter.  
 > Но иногда приведение к ссылке на метод возможно, но требует небольших изменений в коде: изменения порядка параметров в методе или что-то еще.  
 > В таких случаях IDEA помочь не в силах.
 
-#### Синтаксические особенности
+### Синтаксические особенности
 
 В общем случае, все формы записи method reference можно свести к нескольким группам:
 
-1.    _ClassName::methodName_; _ClassName_ – имя класса (_String_, _Integer_…), _methodName_ – имя вызываемого метода;
+1. _ClassName::methodName_; _ClassName_ – имя класса (_String_, _Integer_…), _methodName_ – имя вызываемого метода;
 
-2.    _varName::methodName_; _varName_ – обращение к переменной или полю класса, methodName – имя вызываемого метода;
+2. _varName::methodName_; _varName_ – обращение кпеременной или полю класса, methodName – имя вызываемого метода;
 
-3.    _ClassName::new_; _ClassName_ – имя класса, _new_ – оператор выделения памяти, тот же, что и перед вызовом конструктора.
+3. _ClassName::new_; _ClassName_ – имя класса, _new_ – оператор выделения памяти, тот же, что и перед вызовом конструктора.
 
 Как видите, все три описанные группы используют новый для нас оператор «_::_» – два двоеточия. Это **method reference operator** – **оператор ссылки на метод**. Так же, как «_\->_» – оператор, указывающий на лямбда-выражение, «::» – оператор, указывающий на использование method reference.
 
 Разберем группы, описанные выше, подробнее.
 
 
-
-#### ClassName::methodName
+### ClassName::methodName
 
 Первое, на что стоит обратить внимание, _ClassName_. Под такой записью может скрываться как обращение к обычному классу (_String_, _Object_, _SthYourPublicClass_), так и обращение к вложенному. Например, _AbstractMap_._SimpleEntry_. Также может быть указано название абстрактного класса или интерфейса.
 
@@ -59,9 +48,9 @@ _анонимный класс → лямбда-выражение → method re
 
 Примеры. Если _s_ является переменной типа _String,_ тип остальных параметров не имеет значения:
 
-_s -> Integer.parseInt(s)_          равносильно             _Integer::parseInt_
+    _s -> Integer.parseInt(s)_  равносильно _Integer::parseInt_
 
-_(s, o1, o2) -> String.format(s, 01, 02)_          равносильно             _String::format_
+    _(s, o1, o2) -> String.format(s, 01, 02)_ равносильно _String::format_
 
 В данной реализации использование абстрактного класса или интерфейса в качестве _ClassName_ не имеет каких-либо особенностей.
 
@@ -79,20 +68,21 @@ _(s, o1, o2) -> String.format(s, 01, 02)_          равносильн
 
 Пример 1. Допустим, _d_ – переменная типа _Double_:
 
-_d -> d.intValue()_              равносильно _Double::intValue_
+    _d -> d.intValue()_    равносильно _Double::intValue_
 
 Пример 2. Допустим, _s1_ и _s2_ – переменные типа _String_. Тогда:
 
-_(s1, s2) -> s1.concat(s2)_            равносильно _String::concat_
+    _(s1, s2) -> s1.concat(s2)_   равносильно _String::concat_
 
 Пример 3. Допустим, _s_ – переменная типа _String_, _o1_, _o2_, _o3_ – переменные типа _Object_ (или любого другого, здесь это не будет иметь значения):
 
-_(s, o1, o2, o3) -> s.formatted(o1, o2, o3)_ равносильно _String::formatted_
+    _(s, o1, o2, o3) -> s.formatted(o1, o2, o3)_ равносильно _String::formatted_
 
 Последний пример интересен тем, что _formatted()_ принимает varargs. Как видите, method reference умеет с ним работать.
 
 Полагаю, некоторые из вас уже догадались, что может возникнуть двусмысленность в случае, если класс содержит статический и нестатический методы с одинаковым названием и соответствующим набором параметров – скажем:
 
+```java
 public class SthClass {
 public static void doSth(SthClass sthClass, String sthParam) {
 //do sth
@@ -101,7 +91,7 @@ public static void doSth(SthClass sthClass, String sthParam) {
 public void doSth(String sthParam) {
 //do sth
 }
-
+```
 В таком случае, использование method reference будет недоступно – компилятор не сможет определить, какой из методов вы имели ввиду, ведь оба лямбда-выражения
 
 _(sthClass, s) -> SthClass.doSth(sthClass, s)_
@@ -121,8 +111,7 @@ _SthClass::doSth_
 Касательно применения абстрактных классов и методов в качестве _ClassName_ для данной реализации: вы можете использовать и то, и другое, если соответствующий абстрактный класс/интерфейс имеет хотя бы объявление нужного метода. Но реализация всегда будет использована в соответствии с реальным типом объекта, у которого вызывается метод. Впрочем, та же логика действует и за пределами method reference.
 
 
-
-#### varName::methodName
+### varName::methodName
 
 Сначала разберемся, что может скрываться под _varName_.
 
@@ -132,38 +121,39 @@ _SthClass::doSth_
 
 Пример 1
 
+```java
 public class SthClass {
-private String sthField;
-
-public void doSthUsingField() {    //1
-//some logic
-SthFunctionalInterface f = (s1, s2) -> str.formatted(s1, s2);
-//some logic
+    private String sthField;
+    
+    public void doSthUsingField() {    //1
+        //some logic
+        SthFunctionalInterface f = (s1, s2) -> str.formatted(s1, s2);
+        //some logic
+    }
+    
+    public void doSthWithoutField() {    //2
+        //some logic
+        String strVar = "%s: %s";
+        SthFunctionalInterface f = (s1, s2) -> strVar.formatted(s1, s2);
+        //some logic
+    }
+    
+    public void doSthUsingParam(String strParam) {    //3
+        //some logic
+        SthFunctionalInterface f = (s1, s2) -> strParam.formatted(s1, s2);
+        //some logic
+    }
 }
-
-public void doSthWithoutField() {    //2
-//some logic
-String strVar = "%s: %s";
-SthFunctionalInterface f = (s1, s2) -> strVar.formatted(s1, s2);
-//some logic
-}
-
-public void doSthUsingParam(String strParam) {    //3
-//some logic
-SthFunctionalInterface f = (s1, s2) -> strParam.formatted(s1, s2);
-//some logic
-}
-}
-
+```
 
 
 Здесь
 
-1: _(s1, s2) -> str.formatted(s1, s2)_ равносильна _str::formatted_
+1.     _(s1, s2) -> str.formatted(s1, s2)_ равносильна _str::formatted_
 
-2: _(s1, s2) -> strVar.formatted(s1, s2)_ равносильна _strVar::formatted_
+2.     _(s1, s2) -> strVar.formatted(s1, s2)_ равносильна _strVar::formatted_
 
-3: _(s1, s2) -> strParam.formatted(s1, s2)_ равносильна _strParam::formatted_
+3.     _(s1, s2) -> strParam.formatted(s1, s2)_ равносильна _strParam::formatted_
 
 В данных случаях все легко и непринужденно
 
@@ -171,29 +161,31 @@ SthFunctionalInterface f = (s1, s2) -> strParam.formatted(s1, s2);
 
 Отдельно рассмотрим ситуацию, когда необходима ссылка на не статический метод в рамках того же класса:
 
+```java
 public class SthClass {
-public void doSth () {
-//some logic
-SthFunctionalInterface f = (s1, s2) -> doSthInternal(s1, s2);
-//some logic
+    public void doSth () {
+        //some logic
+        SthFunctionalInterface f = (s1, s2) -> doSthInternal(s1, s2);
+        //some logic
+    }
+    
+    private void doSthInternal(String sthString1, String sthString2) {
+        //do sth
+    }
 }
-
-private void doSthInternal(String sthString1, String sthString2) {
-//do sth
-}
-}
+```
 
 В данном случае лямбда-выражение
 
-_(s1, s2) -> doSthInternal(s1, s2)_
+    _(s1, s2) -> doSthInternal(s1, s2)_
 
 Равносильно лямбда-выражению
 
-_(s1, s2) -> this.doSthInternal(s1, s2)_
+    _(s1, s2) -> this.doSthInternal(s1, s2)_
 
 Что, в свою очередь будет равносильно
 
-_this::doSthInternal_
+    _this::doSthInternal_
 
 Данный пример ненамного сложнее предыдущих, но с использованием _this_ в method reference у новичков часто возникают вопросы.
 
@@ -201,48 +193,50 @@ _this::doSthInternal_
 
 Пример 3
 
-_s -> System.out.println(s)_ равносильно _System.out::println_
+    _s -> System.out.println(s)_ равносильно _System.out::println_
 
 По сути, мы сделали ссылку на метод _ptintln()_ у статического поля класса _System_ – _out_. Это работало бы, будь поле и не статическим. Другой вопрос, что не статическое публичное поле – большая редкость.
 
 Это вполне допустимая форма записи. Только не делайте цепочку обращения к полям длинной, это будет выглядеть, как минимум, странно:
 
-_sthField1.sthField2.sthField3.sthField4::doSth_
+    _sthField1.sthField2.sthField3.sthField4::doSth_
 
 Теперь о том, что будет работать, но чего делать не стоит:
 
 Пример 4
 
+```java
 public class SthClass {
-public void doSthUsingAnotherMethod() {
-//some logic
-SthFunctionalInterface f = (s1, s2) -> getStr().formatted(s1, s2);
-//some logic
+    public void doSthUsingAnotherMethod() {
+        //some logic
+        SthFunctionalInterface f = (s1, s2) -> getStr().formatted(s1, s2);
+        //some logic
+    }
+    
+    private String getStr() {
+        //some method returning some String-object
+    }
+    
+    public void doSthUsingVar() {
+        //some logic
+        String strVar = "%s: %s";
+        List<String> list = List.of(sthVar);
+        SthFunctionalInterface f = (s1, s2) ->
+        list.get(0).formatted(s1, s2);
+        //some logic
+    }
 }
-
-private String getStr() {
-//some method returning some String-object
-}
-
-public void doSthUsingVar() {
-//some logic
-String strVar = "%s: %s";
-List<String> list = List.of(sthVar);
-SthFunctionalInterface f = (s1, s2) ->
-list.get(0).formatted(s1, s2);
-//some logic
-}
-}
+```
 
 Здесь
 
-_(s1, s2) -> getStr().formatted(s1, s2)_ равносильно _getStr()::formatted_
+    _(s1, s2) -> getStr().formatted(s1, s2)_ равносильно _getStr()::formatted_
 
-_(s1, s2) -> list.get(0).formatted(s1, s2)_ равносильно _list.get(0)::formatted_
+    _(s1, s2) -> list.get(0).formatted(s1, s2)_ равносильно _list.get(0)::formatted_
 
 Такие формы записи будут работать. Но являются примерами очень плохого кода. Справедливости ради, в виде лямбда-выражения подобное тоже редко бывает допустимым.
 
-#### ClassName::new
+### ClassName::new
 
 В целом, наиболее интуитивно понятный вид method reference.
 
@@ -252,44 +246,43 @@ _(s1, s2) -> list.get(0).formatted(s1, s2)_ равносильно _list.get(0):
 
 Пример 1. _cap_ – переменная типа _int_, _loadFactor_ – переменная типа _float_:
 
-_(capacity, loadFactor) -> new HashMap(capacity, loadFactor)_
+    _(capacity, loadFactor) -> new HashMap(capacity, loadFactor)_
 
 Равносильно
 
-_HashMap::new_
+    _HashMap::new_
 
 
+Пример 2.С вложенными классами тоже работает. Тип _k_ и _v_ – любой:
 
-Пример 2. С вложенными классами тоже работает. Тип _k_ и _v_ – любой:
-
-_(k, v) -> new AbstractMap.SimpleEntry(k, v)_
+    _(k, v) -> new AbstractMap.SimpleEntry(k, v)_
 
 равносильно
 
-_AbstractMap.SimpleEntry::new_
+    _AbstractMap.SimpleEntry::new_
 
 Для данного типа method reference недопустимо использование абстрактных классов или интерфейсов в качестве _ClassName_ – ведь объект абстрактного класса или интерфейса создать невозможно.
 
 На этом разбор синтаксических особенностей method reference можно считать завершенным.
 
-#### Условия использования method reference
+### Условия использования method reference
 
 Как уже упоминалось выше, не любое лямбда-выражение можно описать с помощью method reference. Постараемся обобщить, какие условия должны выполняться, чтобы такая форма записи стала возможной:
 
-1.    Лямбда-выражение должно быть описано в одну строку и не иметь ветвления. Проще говоря, вашу лямбду не удастся превратить в method reference, если она содержит фигурные скобки, тернарный оператор или _switch-case_;
+1. Лямбда-выражение должно быть описано в одну строку и не иметь ветвления. Проще говоря, вашу лямбду не удастся превратить в method reference, если она содержит фигурные скобки, тернарный оператор или _switch-case_;
 
-2.    Все параметры лямбда-выражения должны использоваться строго единожды и в порядке, в котором они передаются в лямбду;
+2. Все параметры лямбда-выражения должны использоваться строго единожды и в порядке, в котором они передаются в лямбду;
 
-3.    В качестве параметра метода не может быть передано что-либо, кроме параметров лямбда-выражения. Проще говоря, если вы хотите использовать в качестве параметра вызываемого в лямбде метода поле или переменную – что-либо, кроме параметров самой лямбды – такую лямбду не удастся превратить в method reference (пример ниже):
+3. В качестве параметра метода не может быть передано что-либо, кроме параметров лямбда-выражения. Проще говоря, если вы хотите использовать в качестве параметра вызываемого в лямбде метода поле или переменную – что-либо, кроме параметров самой лямбды – такую лямбду не удастся превратить в method reference (пример ниже):
 
+```java
 String str = "sthString";
-SthFunctionalInterface  f = (s1, s2) -> s1.formatted(str, s2);
-
-
+SthFunctionalInterface f = (s1, s2) -> s1.formatted(str, s2);
+```
 
 В целом, это вполне нормально, если ваше лямбда-выражение не сворачивается до method reference. Причин, почему это так – множество и далеко не все из них свидетельствуют о низком качестве кода. Но, все же, рекомендую завести привычку использовать данный механизм там, где это возможно. Такой подход улучшает читабельность кода.
 
-#### Полезные ссылки
+### Полезные ссылки
 
 Вне зависимости от того, насколько понятной была для вас эта статья, рекомендую не проходить мимо следующих двух ссылок.
 
@@ -301,7 +294,7 @@ SthFunctionalInterface  f = (s1, s2) -> s1.formatted(str, s2);
 
 [https://www.bestprog.net/ru/2020/12/22/java-types-of-method-references-reference-to-methods-ru/](https://www.bestprog.net/ru/2020/12/22/java-types-of-method-references-reference-to-methods-ru/)
 
-#### Вместо итога
+### Вместо итога
 
 Я не могу назвать эту тему обязательной, или безусловно необходимой, особенно для junior-специалистов. Писать код, даже использовать лямбда-выражения, можно не используя конструкцию method reference или используя вслепую – когда IDEA предложит.
 
@@ -311,24 +304,22 @@ SthFunctionalInterface  f = (s1, s2) -> s1.formatted(str, s2);
 
 С теорией на сегодня все!
 
-![](/file/5e88914db36f025601db2.png)
-
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 
 Переходим к практике:
 
-#### Задача 1
+### Задача 1
 
 Создайте произвольный список элементов. Выведите каждый из элементов в консоль. Параметр _forEach()_ опишите как _method reference_.
 
-#### Задача 2
+### Задача 2
 
 Реализуйте Задачу 1, обернув метод выведения записи в консоль (_System.out.println()_) в собственный статический метод.
 
-#### Задача 3
+### Задача 3
 
-Реализуйте Задачу 3 из [урока 46](/Funkcionalnye-interfejsy-i-lyambda-vyrazheniya-02-10), описав все реализуемые фильтры через method reference’ы. Рекомендую вынести функциональность формирования фильтров в отдельный сервис, если это не было сделано ранее.
-
+Реализуйте Задачу 3 из [урока 46](..%2F46%2FFunctional%20Interfaces%20and%20Lambda%20Expressions.md), описав все реализуемые фильтры через method reference’ы. Рекомендую вынести функциональность формирования фильтров в отдельный сервис, если это не было сделано ранее.
 
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
@@ -338,18 +329,3 @@ SthFunctionalInterface  f = (s1, s2) -> s1.formatted(str, s2);
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#36525b55577642535a535144575b18594451094543545c5355420b645346594442130406425913040662535a53514457465e13040646575153130406130404137206137707137207130e07137207130e74137206137474137206137477137206137406130406137206137472137206137406130406137206137475137206137403137207130e04137206137473137206137402130404105459524f0b6453465944425352130406465751531305771304065e4242464513057713047013047042535a5351445718465e13047065454f5a5d571b58571b5b534259521b06041b0704130677130677130677)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1676237561,"pageId":"8c96f6d3e32feb6bd60dd","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

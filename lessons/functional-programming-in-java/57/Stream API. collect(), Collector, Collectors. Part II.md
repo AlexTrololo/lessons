@@ -1,23 +1,13 @@
-Stream API. collect(), Collector, Collectors. Теория. Часть II – Telegraph
-
 Stream API. collect(), Collector, Collectors. Теория. Часть II
 ==============================================================
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)March 17, 2023
-
-Stream API. collect(), Collector, Collectors. Теория. Часть II
-
-=================================================================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 ### Предыдущая часть
 
-[https://telegra.ph/Stream-API-collect-Collector-Collectors-03-17](/Stream-API-collect-Collector-Collectors-03-17)
+[Stream API. collect(), Collector, Collectors. Part II.md](Stream%20API.%20collect%28%29%2C%20Collector%2C%20Collectors.%20Part%20II.md)
 
 
-
-#### Подробнее о downstream
+### Подробнее о downstream
 
 Общая концепция, полагаю, уже понятна. **Downstream** – это коллектор, который вызываются внутри других коллекторов и применяются для подмножества данных. В случае с _groupingBy()_ – подмножество определяется классификатором. В других коллекторах (рассматриваемых ниже), классификатор может заменяться другим параметром, но суть остается прежней – даунстрим будет применен к каждому подмножеству по отдельности.
 
@@ -25,13 +15,15 @@ Stream API. collect(), Collector, Collectors. Теория. Часть II
 
 Но вместе с тем, ничто не мешает использовать в качестве даунстрима другой коллектор с даунстримом. Пример ниже:
 
+```java
 Stream<User> userStream = …;
 Map<String, Map<Integer, Long>> map = userStream.collect(
-Collectors.groupingBy(
-User::getName,
-Collectors.groupingBy(
-User::getAge,
-Collectors.counting())));
+    Collectors.groupingBy(
+        User::getName,
+        Collectors.groupingBy(
+            User::getAge,
+            Collectors.counting())));
+```
 
 В данном случае, результатом будет структура данных, из которой можно получить число юзеров с определенным именем (первый ключ) и возрастом (ключ вложенной мапы).
 
@@ -46,8 +38,7 @@ Collectors.counting())));
 Ниже мы рассмотрим ряд коллекторов, которые предполагается использовать именно в качестве _downstream_. Далее вернемся к остальным Collector’ам, в т.ч. принимающих _downstream_ параметром.
 
 
-
-#### reducing()
+### reducing()
 
 Как _reduce()_ – наиболее гибкая операция из терминальных операций редукции, так и _reducing()_ – наиболее гибкий из коллекторов-даунстримов. По сути, является аналогом _reduce()_ для подмножества.
 
@@ -55,25 +46,28 @@ Collectors.counting())));
 
 Ссылки на примеры использования (описание на английском, но примеры понятны и без пояснений):
 
-·       [https://stackabuse.com/guide-to-java-8-collectors-reducing/](https://stackabuse.com/guide-to-java-8-collectors-reducing/)
+* [https://stackabuse.com/guide-to-java-8-collectors-reducing/](https://stackabuse.com/guide-to-java-8-collectors-reducing/)
 
-·       [http://www.java2s.com/Tutorials/Java/java.util.stream/Collectors/Collectors.reducing\_BinaryOperator\_T\_op\_.htm](http://www.java2s.com/Tutorials/Java/java.util.stream/Collectors/Collectors.reducing_BinaryOperator_T_op_.htm)
+* [http://www.java2s.com/Tutorials/Java/java.util.stream/Collectors/Collectors.reducing\_BinaryOperator\_T\_op\_.htm](http://www.java2s.com/Tutorials/Java/java.util.stream/Collectors/Collectors.reducing_BinaryOperator_T_op_.htm)
 
-#### counting()
+### counting()
 
 Его мы уже использовали в примерах выше. Считает число элементов в подмножестве. Если применить вне _downstream_ – будет эквивалентен _Stream.count()_:
 
+```java
 Long amount = Stream.of("1", "2", "3")
-.collect(Collectors.counting());               
+    .collect(Collectors.counting()); 
+```
 
 равносильно
 
+```java
 Long amount = Stream.of("1", "2", "3")
-.count();
+    .count();
+```
 
 
-
-#### mapping()
+### mapping()
 
 Немного специфичный коллектор (как и несколько следующих) – вне _downstream_ его использовать бесполезно, но он сам принимает _downstream_.
 
@@ -81,13 +75,15 @@ Long amount = Stream.of("1", "2", "3")
 
 Рассмотрим на примере. Требуется получить список возрастов юзеров по имени:
 
+```java
 Stream<User> userStream = …;
 Map<String, List<Integer>> map = userStream.collect(
-Collectors.groupingBy(
-User::getName,
-Collectors.mapping(
-User::getAge,
-Collectors.toList())));
+    Collectors.groupingBy(
+        User::getName,
+        Collectors.mapping(
+            User::getAge,
+            Collectors.toList())));
+```
 
 В данном случае, ключ мапы – имя юзера, значение – список возрастов пользователей с именем как в ключе.
 
@@ -97,17 +93,20 @@ Collectors.toList())));
 
 Если рассматривать _mapping()_ не как downstream, он равноценен использованию _map()_ _\+ collect()_, с коллектором, переданным downstream’ом в сам _mapping()_:
 
+```java
 List<Integer> ages = userStream.collect(
-Collectors.mapping(User::getAge, Collectors.toList()));
+    Collectors.mapping(User::getAge, Collectors.toList()));
+```
 
 равносильно
 
+```java
 List<Integer> ages = userStream.map(User::getAge)
-.collect(Collectors.toList());
+    .collect(Collectors.toList());
+```
 
 
-
-#### flatMapping()
+### flatMapping()
 
 Если _mapping()_ является объединением _map() + collect()_ для подмножества, то _flatMapping()_ – объединение _flatMap() + collect()_. В качестве самостоятельного коллектора вырождается именно в такую связку.
 
@@ -117,49 +116,51 @@ List<Integer> ages = userStream.map(User::getAge)
 
 **Пример**. Найти самый длинный тег для пользователей каждого возраста:
 
+```java
 Stream<User> userStream = …
 Map<Integer, Optional<String>> longestTagByAge = userStream.collect(
-Collectors.groupingBy(
-User::getAge,
-Collectors.flatMapping(
-user -> user.getTags().stream(),
-Collectors.maxBy(Comparator.comparing(String::length)))));
+    Collectors.groupingBy(
+        User::getAge,
+        Collectors.flatMapping(
+            user -> user.getTags().stream(),
+            Collectors.maxBy(Comparator.comparing(String::length)))));
+```
 
 
-
-#### filtering()
+### filtering()
 
 Полагаю, вы уже догадались. _filter() + collect()_. Все также имеет смысл в качестве downstream, иначе стоит использовать как самостоятельные операции.
 
 **Пример**. Получение списка пользователей, старше 30 лет, по каждому имени:
 
+```java
 Stream<User> userStream = …;
 Map<String, List<User>> usersOlder30ByName = userStream.collect(
-Collectors.groupingBy(
-User::getName,
-Collectors.filtering(
-user -> user.getAge() > 30,
-Collectors.toList())));
+    Collectors.groupingBy(
+        User::getName,
+        Collectors.filtering(
+            user -> user.getAge() > 30,
+            Collectors.toList())));
+```
 
 
-
-#### minBy() и maxBy()
+### minBy() и maxBy()
 
 Аналоги терминальных операций _min()_ и _max()_ от мира downstream. Принимают параметром _Comparator_. Пример использования можно увидеть [выше](#flatMapping()).
 
-#### summarizingInt(), summarizingLong(), summarizingDouble()
+### summarizingInt(), summarizingLong(), summarizingDouble()
 
 Коллекторы, реализующие для подмножества связку вроде _mapToInt()_/_mapToLong()_/_mapToDouble() + summaryStatistics()_.
 
 За пределами downstream имеет право на жизнь, если лямбда-маппер достаточно лаконичная.
 
-#### summingInt(), summingLong(), summingDouble()
+### summingInt(), summingLong(), summingDouble()
 
 _mapToInt()_/_mapToLong()_/_mapToDouble() + sum()_.
 
 Опять же, не вижу проблемы использовать за пределами downstream, если лямбда в параметре простая.
 
-#### averagingInt(), averagingLong(), averagingDouble()
+### averagingInt(), averagingLong(), averagingDouble()
 
 **НЕ РАВНОСИЛЬНО** _mapToInt()_/_mapToLong()_/_mapToDouble() + average()_.
 
@@ -171,31 +172,35 @@ _mapToInt()_/_mapToLong()_/_mapToDouble() + sum()_.
 
 На этом подпункт downstream можно считать завершенным и у нас осталось буквально несколько коллекторов, которые мы еще не рассмотрели.
 
-#### partitioningBy()
+### partitioningBy()
 
 Коллектор, который разделяет стрим на мапу из двух элементов: первый – с ключом _true_, второй – с ключом _false_.
 
-Имеет две реализации.  Первая – с одним параметром типа _Predicate_ (как у _filter()_). Те элементы, которые выполняют условие предиката – становятся элементами списка, доступного по ключу _true_, остальные – элементами списка, дуступного по ключу _false_.
+Имеет две реализации. Первая – с одним параметром типа _Predicate_ (как у _filter()_). Те элементы, которые выполняют условие предиката – становятся элементами списка, доступного по ключу _true_, остальные – элементами списка, дуступного по ключу _false_.
 
 **Пример**. Разделим элементы стрима по признаку четности:
 
+```java
 Map<Boolean, List<Integer>> map = Stream.of(1, 2, 3, 4)
-.collect(Collectors.partitioningBy(i -> i % 2 == 0));
-//\[true={2, 4}, false={1, 3}\]
+    .collect(Collectors.partitioningBy(i -> i % 2 == 0));
+//[true={2, 4}, false={1, 3}]
+```
 
 Вторая реализация _partitioningBy()_ добавляет параметр-downstream. В первой версии неявно вызывается _Collectors.toList()_.
 
 **Пример**. Посчитаем сумму четных и сумму нечетных элементов стрима:
 
+```java
 Map<Boolean, Integer> map = Stream.of(1, 2, 3, 4)
-.collect(Collectors.partitioningBy(
-     i -> i % 2 == 0, 
-     Collectors.summingInt(i -> i)));
-//\[true=6, false=4\]
+    .collect(Collectors.partitioningBy(
+        i -> i % 2 == 0, 
+        Collectors.summingInt(i -> i)));
+//[true=6, false=4]
+```
 
 В целом, является достаточно узконаправленным коллектором, но имеет право на жизнь.
 
-#### teeing()
+### teeing()
 
 Вероятно, самый своеобразный коллектор, позволяющий получить два разных результата из одного стрима и объединить их в рамках одного результирующего объекта. Не забывайте, может применяться и как downstream, т.е. не ко всем элементам стрима одновременно.
 
@@ -203,27 +208,28 @@ Map<Boolean, Integer> map = Stream.of(1, 2, 3, 4)
 
 Но в качестве примера предлагаю рассмотреть экзотику. Создадим на базе стрима юзеров нового юзера – с самым длинным именем и самым большим возрастом:
 
+```java
 Stream<User> userStream = …;
 User superUser = userStream.collect(Collectors.teeing(
-Collectors.mapping(
-User::getAge,
-Collectors.maxBy(Comparator.naturalOrder())),
-Collectors.mapping(
-User::getName,
-Collectors.maxBy(Comparator.comparing(String::length))),
-(ageOptional, nameOptional) -> {
-var user = new User();
-
-    ageOptional.ifPresent(user::setAge);
-    nameOptional.ifPresent(user::setName);
-
-    return user;
-}
+    Collectors.mapping(
+        User::getAge,
+        Collectors.maxBy(Comparator.naturalOrder())),
+    Collectors.mapping(
+        User::getName,
+        Collectors.maxBy(Comparator.comparing(String::length))),
+    (ageOptional, nameOptional) -> {
+        var user = new User();
+    
+        ageOptional.ifPresent(user::setAge);
+        nameOptional.ifPresent(user::setName);
+    
+        return user;
+    }
 ));
+```
 
 
-
-#### collectingAndThen()
+### collectingAndThen()
 
 Интересный коллектор, который позволяет прикрутить к другому коллектору свой _finisher_.
 
@@ -233,13 +239,14 @@ var user = new User();
 
 Хороший пример – Обертывание результата stream’а в _Optional_. Например, мы хотим бросить эксепшн, если коллекция пуста, но не хотим переходить к императивному стилю. В данном случае «не хотим» == «имеем причины не делать». Иначе подобное решение выглядит спорным:
 
+```java
 List<Integer> list = Stream.of(1, 2, 3, 4)
-.collect(Collectors.collectingAndThen(
-Collectors.toList(),
-Optional::of))
-.filter(Predicate.not(List::isEmpty)) // уже Optional.filter()
-.orElseThrow();
-
+    .collect(Collectors.collectingAndThen(
+        Collectors.toList(),
+        Optional::of))
+    .filter(Predicate.not(List::isEmpty)) // уже Optional.filter()
+    .orElseThrow();
+```
 
 
 ### В качестве заключения
@@ -248,9 +255,9 @@ Optional::of))
 
 В целом, на этом я планировал завершить и первое знакомство с функциональной парадигмой в Java, но в итоге решил задержаться «рядом» с ней еще на две статьи:
 
-1.    В этом уроке не будет практических задач, он и так получился очень объемным. Зато следующая статья будет полностью посвящена практическим заданиям на закрепления работы с коллекторами. Если промежуточные и большая часть терминальных операций и так не является чем-то слишком сложным, то на освоении возможностей _collect()_ спотыкаются почти все. Постараемся минимизировать этот риск;
+1. В этом уроке не будет практических задач, он и так получился очень объемным. Зато следующая статья будет полностью посвящена практическим заданиям на закрепления работы с коллекторами. Если промежуточные и большая часть терминальных операций и так не является чем-то слишком сложным, то на освоении возможностей _collect()_ спотыкаются почти все. Постараемся минимизировать этот риск;
 
-2.    Методы коллекций, использующие лямбда-выражения. В ряде случаев нет смысла использовать стримы – по крайней мере, если хорошо владеешь коллекциями. Разберем методы, упрощающие жизнь и код, которые упустили на этапе знакомства с коллекциями.
+2. Методы коллекций, использующие лямбда-выражения. В ряде случаев нет смысла использовать стримы – по крайней мере, если хорошо владеешь коллекциями. Разберем методы, упрощающие жизнь и код, которые упустили на этапе знакомства с коллекциями.
 
 В целом, хочу поздравить тех, кто более-менее освоил материал по Stream API. Этот раздел давался глубже, чем большинству джунов и, возможно, глубже, чем следовало бы для первого знакомства. Но я все еще надеюсь, что это было интересно и познавательно.
 
@@ -264,7 +271,7 @@ Metanit в данном разделе дает более поверхност�
 
 С теорией на сегодня все! Практика и только практика в следующей статье
 
-![](/file/3684c4a557a0d37a2baf0.png)
+![end_of_the_lesson.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson.png)
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
 
@@ -273,18 +280,3 @@ Metanit в данном разделе дает более поверхност�
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#8befe6e8eacbffeee7eeecf9eae6a5e4f9ecb4f8fee9e1eee8ffb6d9eefbe4f9ffaeb9bbffe4aeb9bbdfeee7eeecf9eafbe3aeb9bbfbeaeceeaeb9bbaeb9b9d8fff9eeeae6aeb9bbcadbc2a5aeb9bbe8e4e7e7eee8ffaeb9b3aeb9b2aeb9c8aeb9bbc8e4e7e7eee8ffe4f9aeb9c8aeb9bbc8e4e7e7eee8ffe4f9f8a5aeb9bbaecfbbaecab9aecfbbaec9beaecfbbaec9ceaecfbaaeb3bbaecfbbaec9b3aecfbaaeb3cda5aeb9bbaecfbbaecabcaecfbbaec9bbaecfbaaeb3baaecfbaaeb3b9aecfbaaeb3c8aeb9bbc2c2aeb9b9ade9e4eff2b6d9eefbe4f9ffeeefaeb9bbfbeaeceeaeb8caaeb9bbe3fffffbf8aeb8caaeb9cdaeb9cdffeee7eeecf9eaa5fbe3aeb9cdd8fff9eeeae6a6cadbc2a6e8e4e7e7eee8ffa6c8e4e7e7eee8ffe4f9a6c8e4e7e7eee8ffe4f9f8a6c8c3eaf8ffa6c2c2a6bbb8a6babcaebbcaaebbcaaebbca)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1679018243,"pageId":"b95a97c809022c77d18b3","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

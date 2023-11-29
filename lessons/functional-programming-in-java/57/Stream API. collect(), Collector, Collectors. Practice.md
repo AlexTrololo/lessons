@@ -1,44 +1,37 @@
-Stream API. collect(), Collector, Collectors. Практика – Telegraph
-
 Stream API. collect(), Collector, Collectors. Практика
 ======================================================
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)March 17, 2023
 
-Stream API. collect(), Collector, Collectors. Практика
-
-=========================================================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
-
-Сегодняшняя статья, как и обещал, полностью посвящена практике по уроку «Stream API. _collect()_, _Collector_, _Collectors_». С теорией можно ознакомиться здесь: [Часть I](/Stream-API-collect-Collector-Collectors-03-17), [Часть II](/Stream-API-collect-Collector-Collectors-CHast-II-03-17).
+Сегодняшняя статья, как и обещал, полностью посвящена практике по уроку «Stream API. _collect()_, _Collector_, _Collectors_». С теорией можно ознакомиться здесь: [Часть I](Stream%20API.%20collect%28%29%2C%20Collector%2C%20Collectors.%20Part%20I.md), [Часть II](Stream%20API.%20collect%28%29%2C%20Collector%2C%20Collectors.%20Part%20II.md).
 
 Практику предлагаю построить вокруг общей модели данных, чтобы максимально сконцентрироваться на работе со Stream и минимизировать акцент на доменной области.
 
 За основу предлагаю взять классы, описанные в одном из предыдущих уроков ([Функциональное программирование в Java](/Funkcionalnoe-programmirovanie-v-Java-02-14)) и немного их доработать.
 
+```java
 public class Department {
-private String name;
-private List<Employee> employees;
-private int vacancyAmount;
+    private String name;
+    private List<Employee> employees;
+    private int vacancyAmount;
 }
 
 public class Employee {
-private String name;
-private boolean isMale;
-private String position;
-private int age;
+    private String name;
+    private boolean isMale;
+    private String position;
+    private int age;
 }
+```
 
 Класс _Company_ не понадобится к рамках текущих заданий, поэтому опустим его.
 
 В рамках реализации задач, добавим этим классам конструкторы, геттеры и сеттеры для облегчения взаимодействия с ними. По мере необходимости можете также переопределить методы _Object_ для этих классов.
 
-#### Общая вводная для всех задач
+### Общая вводная для всех задач
 
 Представим, что мы пытаемся реализовать набор функций для HRM-системы компании, каждая из которых сводится к формированию определенной статистики на базе информации о всех департаментах компании и сотрудниках в них. Реализация каждой задачи должна представлять собой отдельный метод (или класс), единственным параметром которого является список всех департаментов в компании, а возвращаемым значением – произвольный объект (чаще всего – какая-то коллекция), хранящий информацию, которую требуется получить по условию задачи.
 
-#### Задачи
+### Задачи
 
 **Задача 1**. Предоставьте список всех сотрудников компании.
 
@@ -91,7 +84,7 @@ private int age;
 
 С практикой на сегодня все!
 
-![](/file/cbde49515c96c47c52353.png)
+![end_of_the_lesson.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson.png)
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
 
@@ -100,18 +93,3 @@ private int age;
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#086c656b69487c6d646d6f7a696526677a6f377b7d6a626d6b7c355a6d78677a7c2d3a387c672d3a385c6d646d6f7a6978602d3a3878696f6d2d3a382d3a3a5b7c7a6d69652d3a38495841262d3a386b6764646d6b7c2d3a302d3a312d3a4b2d3a384b6764646d6b7c677a2d3a4b2d3a384b6764646d6b7c677a7b262d3a382d4c382d314e2d4c392d30382d4c382d4a382d4c382d4a492d4c392d303a2d4c382d4a302d4c382d4a492d4c382d4a382d3a3a2e6a676c71355a6d78677a7c6d6c2d3a3878696f6d2d3b492d3a38607c7c787b2d3b492d3a4e2d3a4e7c6d646d6f7a692678602d3a4e5b7c7a6d696525495841256b6764646d6b7c254b6764646d6b7c677a254b6764646d6b7c677a7b25587a69637c61636925383b25393f2d38492d38492d3849)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1679091542,"pageId":"2a31f8f84028aa6e885bb","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

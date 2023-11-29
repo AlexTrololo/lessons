@@ -78,15 +78,15 @@ Queue и вариации на тему. Часть II. Имплементаци
 
 _Queue_:
 
-*   Непотокобезопасная коллекция: _PriorityQueue_;
-*   Потокобезопасная (Legacy): отсутствует;
-*   Потокобезопасная (_java.util.concurrent_): _ConcurrentLinkedQueue_;
+* Непотокобезопасная коллекция: _PriorityQueue_;
+* Потокобезопасная (Legacy): отсутствует;
+* Потокобезопасная (_java.util.concurrent_): _ConcurrentLinkedQueue_;
 
 _Deque_:
 
-*   Непотокобезопасная коллекция: _ArrayDeque_;
-*   Потокобезопасная (Legacy): иерархически отсутствует. Если рассматривать _Deque_ как идеологического предка стека – _Stack_ (наследник _Vector_);
-*   Потокобезопасная (_java.util.concurrent_): _LinkedBlockingDeque_, _ConcurrentLinkedDeque_
+* Непотокобезопасная коллекция: _ArrayDeque_;
+* Потокобезопасная (Legacy): иерархически отсутствует. Если рассматривать _Deque_ как идеологического предка стека – _Stack_ (наследник _Vector_);
+* Потокобезопасная (_java.util.concurrent_): _LinkedBlockingDeque_, _ConcurrentLinkedDeque_
 
 
 ### В качестве итога

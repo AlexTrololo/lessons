@@ -1,15 +1,6 @@
-DML. Блок WHERE – Telegraph
-
 DML. Блок WHERE
 ===============
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)July 08, 2023
-
-DML. Блок WHERE
-
-==================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 В рамках прошлой статьи мы разобрались, как получать информацию из таблицы и как ограничивать объем этой информации вертикально (по колонкам). Сегодня же начнем знакомство с основным (но не единственным) механизмом ограничения выборки горизонтально (по записям).
 
@@ -23,48 +14,49 @@ DML. Блок WHERE
 
 **Пример**. Получить список пассажиров с именем «_Ivan_»:
 
-select \* from passenger where first\_name = 'Ivan';
+```
+select * from passenger where first_name = 'Ivan';
+```
 
-В данном запросе мы указываем, что хотим получить информацию из всех колонок таблицы по записях, удовлетворяющих нашему фильтру. Для этого в запросе добавляется **_WHERE_\-блок**. Он состоит из оператора **_WHERE_** и условий фильтрации, расположенных после него. В примере выше таким условием фильтрации выступает _first\_name = 'Ivan'_.
+В данном запросе мы указываем, что хотим получить информацию из всех колонок таблицы по записях, удовлетворяющих нашему фильтру. Для этого в запросе добавляется **_WHERE_\-блок**. Он состоит из оператора **_WHERE_** и условий фильтрации, расположенных после него. В примере выше таким условием фильтрации выступает _first_name = 'Ivan'_.
 
 
-
-#### Операторы сравнения
+### Операторы сравнения
 
 Обратите внимание, в SQL равенство обозначается одним «**\=**». В остальном базовые операторы сравнения похожи:
 
-·      **\=** – Равно;
+* **\=** – Равно;
 
-·      **!=** – Не равно. Также можно использовать оператор «**<>**»;
+* **!=** – Не равно. Также можно использовать оператор «**<>**»;
 
-·      **\>** – Больше;
+* **\>** – Больше;
 
-·      **<** – Меньше;
+* **<** – Меньше;
 
-·      **\>=** – Большие или равно;
+* **\>=** – Большие или равно;
 
-·      **<=** – Меньше или равно.
+* **<=** – Меньше или равно.
 
 В отличии от Java, данные операторы подходят не только для числовых типов данных. Так, типы даты и времени будут сравниваться по значению (сегодняшняя дата больше вчерашней), строковые типы – по кодам символов. Условно, в алфавитном порядке.
 
 
-
-#### Операторы IS и IS NOT
+### Операторы IS и IS NOT
 
 Еще одно особенностью SQL является то, что _null != null_. Таким образом, использовать операторы равенства и неравенства бессмысленно в случае выборки записей с пустым значением в определенной колонки (или, наоборот, любым не пустым).
 
 Для операций с _null_ предусмотрены другие операторы – **_IS_** и **_IS NOT_**:
 
-select \* from passenger where last\_purchase is null;
-select \* from passenger where last\_purchase is not null;
+```
+select * from passenger where last_purchase is null;
+select * from passenger where last_purchase is not null;
+```
 
 
-
-#### Оператор NOT
+### Оператор NOT
 
 К слову, **_NOT_** в SQL является отдельным оператором (по семантике схожим с «!» в Java). Так, он может располагаться перед условием, делая его отрицательным:
 
-select \* from passenger where not first\_name = 'Ivan';
+select * from passenger where not first_name = 'Ivan';
 
 Не скажу, что оператор является таким же популярным, как и его аналог в Java – все же, особенности работы с условными выражениями несколько различаются. Но и ничего плохого в нем нет, если он делает ваш запрос более читабельным или, что важнее для SQL, более оптимальным.
 
@@ -72,23 +64,24 @@ select \* from passenger where not first\_name = 'Ivan';
 
 Честно говоря, с точки зрения классической группировки операторов NOT было бы правильнее в следующий пункт. Но ассоциативно его хочется выделить отдельно.
 
-#### Логические операторы и объединение условий
+### Логические операторы и объединение условий
 
 Как и в Java, зачастую требуется производить выборку по нескольким условиям, объединенных по И/ИЛИ. Java также включает «исключающее ИЛИ» (XOR), обозначаемый как «_^_». В SQL же оператор для XOR отсутствует и его придется реализовывать как группу И/ИЛИ, в случае необходимости.
 
 Логические операторы в SQL:
 
-·      **_AND_** – И. Аналогичен «&&» в Java;
+* **_AND_** – И. Аналогичен «&&» в Java;
 
-·      **_OR_** – ИЛИ. Аналогичен «||» в Java;
+* **_OR_** – ИЛИ. Аналогичен «||» в Java;
 
-·      **_NOT_** – НЕ. Оставим для закрепления. Аналогичен «!» в Java.
-
+* **_NOT_** – НЕ. Оставим для закрепления. Аналогичен «!» в Java.
 
 
 Пример запроса с двумя условиями:
 
-select \* from passenger where first\_name = 'Ivan' OR last\_purchase is null;
+```
+select * from passenger where first_name = 'Ivan' OR last_purchase is null;
+```
 
 Опять же, как и в Java, можно строить более сложные объединения, включающие группы условий. Для объединения групп используются скобки.
 
@@ -99,31 +92,38 @@ _**_Или_** _же пол указан как_ **_женский_**
 
 Выглядит так:
 
-select \* from passenger where (first\_name = 'Ivan' and birth\_date < '2000-01-01') or male is false;
+```
+select * from passenger where (first_name = 'Ivan' and birth_date < '2000-01-01') or male is false;
+```
 
 Или так:
 
-select \* from passenger where (first\_name = 'Ivan' and birth\_date < '2000-01-01') or not male;
+```
+select * from passenger where (first_name = 'Ivan' and birth_date < '2000-01-01') or not male;
+```
 
 Обратите внимание, для сравнения boolean-значений допустимо как использование **_\=_**/**_!=_**, так и использование **_IS_**/**_IS NOT_**.
 
 Для сравнения, в Java выражение из WHERE-блока выглядело бы примерно так:
 
+```
 (firstName.equals("Ivan") && birthDate.isBefore(minBirthDate) || !male
+```
 
 Где _minBirthDate_ равна '2000-01-01'.
 
 
-
 Бонусом, приложу часть SQL-запроса, которая реализует XOR. На место _condition1_ и _condition2_ можно подставить любые условия фильтрации:
 
+```
 (condition1 AND NOT condition2) OR (NOT condition1 AND condition2)
+```
 
 Как было сказано выше, в следующем уроке познакомимся с более сложными операторами фильтрации. Пока же предлагаю закрепить основы.
 
 С теорией на сегодня все!
 
-![](/file/c08c6840399fa9ef344d7.png)
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 Переходим к практике:
 
@@ -140,7 +140,6 @@ select \* from passenger where (first\_name = 'Ivan' and birth\_date < '2000-01-
 Получите все записи, где фамилия равна «_Petrov_» и имя равно «_Petr_». Добавьте к выборке все записи, для которых дата рождения меньше, чем дата последней покупки билета.
 
 
-
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
 
 Канал: [https://t.me/ViamSupervadetVadens](https://t.me/ViamSupervadetVadens)
@@ -148,18 +147,3 @@ select \* from passenger where (first\_name = 'Ivan' and birth\_date < '2000-01-
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#85e1e8e6e4c5f1e0e9e0e2f7e4e8abeaf7e2baf6f0e7efe0e6f1b8d7e0f5eaf7f1a0b7b5f1eaa0b7b5d1e0e9e0e2f7e4f5eda0b7b5f5e4e2e0a0b7b5a0b7b7c1c8c9aba0b7b5a0c1b5a0bcb4a0c1b5a0c7c7a0c1b5a0c7c0a0c1b5a0c7c4a0b7b5d2cdc0d7c0a0b7b7a3e7eae1fcb8d7e0f5eaf7f1e0e1a0b7b5f5e4e2e0a0b6c4a0b7b5edf1f1f5f6a0b6c4a0b7c3a0b7c3f1e0e9e0e2f7e4abf5eda0b7c3c1c8c9a8c7e9eaeea8d2cdc0d7c0a8b5b2a8b5bda0b5c4a0b5c4a0b5c4)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1688832980,"pageId":"64ccfc0feb966e45836a9","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

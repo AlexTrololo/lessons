@@ -1,15 +1,6 @@
-DML. DELETE и TRUNCATE – Telegraph
-
 DML. DELETE и TRUNCATE
 ======================
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)July 23, 2023
-
-DML. DELETE и TRUNCATE
-
-=========================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 В рамках сегодняшней статьи рассмотрим инструментарий, предоставляемый SQL для удаления данных из таблицы.
 
@@ -19,11 +10,15 @@ DML. DELETE и TRUNCATE
 
 Оператор **_DELETE_** позволяет удалять из таблицы все записи:
 
+```
 delete from passenger;
+```
 
 Или по определенному условию:
 
+```
 delete from passenger where male;
+```
 
 Особенность данного оператора заключается в том, что он удаляет записи построчно, вне зависимости от наличия или содержимого блока _WHERE_. Это позволяет вносить данные об удаленных строках во внутренний журнал событий СУБД и несет ряд других бонусов (по мере знакомства с определенными темами я постараюсь подсвечивать моменты, которые не расписаны сейчас).
 
@@ -41,7 +36,9 @@ _TRUNCATE_ же, в свою очередь, в зависимости от СУ
 
 Оператор **_TRUNCATE_**, в общем случае, имеет максимально простой синтаксис:
 
+```
 truncate table passenger;
+```
 
 Данный запрос удалит все записи из таблицы _passenger_. При чем, в отличии от _DELETE_, удаление НЕ будет построчным – удаление через _TRUNCATE_ является единой атомарной операцией.
 
@@ -73,7 +70,7 @@ PostgreSQL имеет некоторые кастомизации для _TRUNCA
 
 Смысла в отдельной практике не вижу, кроме самих операторов ничего нового в данном уроке нет.
 
-![](/file/3924884b4a5c5d50e0255.png)
+![end_of_the_lesson.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson.png)
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
 
@@ -82,18 +79,3 @@ PostgreSQL имеет некоторые кастомизации для _TRUNCA
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#80e4ede3e1c0f4e5ece5e7f2e1edaeeff2e7bff3f5e2eae5e3f4bdd2e5f0eff2f4a5b2b0f4efa5b2b0d4e5ece5e7f2e1f0e8a5b2b0f0e1e7e5a5b2b0a5b2b2c4cdccaea5b2b0c4c5ccc5d4c5a5b2b0a5c4b0a5c2b8a5b2b0d4d2d5cec3c1d4c5a5b2b2a6e2efe4f9bdd2e5f0eff2f4e5e4a5b2b0f0e1e7e5a5b3c1a5b2b0e8f4f4f0f3a5b3c1a5b2c6a5b2c6f4e5ece5e7f2e1aef0e8a5b2c6c4cdccadc4c5ccc5d4c5ade9add4d2d5cec3c1d4c5adb0b7adb2b3a5b0c1a5b0c1a5b0c1)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1690124933,"pageId":"4e1bb5d4030ee63ce8def","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

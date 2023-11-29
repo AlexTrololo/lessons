@@ -1,15 +1,6 @@
-DML. Сортировки и пагинация – Telegraph
-
 DML. Сортировки и пагинация
 ===========================
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)July 15, 2023
-
-DML. Сортировки и пагинация
-
-==============================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 Сегодня поговорим о двух важных инструментах работы с данными. На первый взгляд они могут показаться не связанными между собой, но это не так.
 
@@ -21,47 +12,54 @@ DML. Сортировки и пагинация
 
 Для определения порядка записей в выборке и существует оператор **_ORDER BY_**. Рассмотрим подробнее на примерах:
 
-select \* from passenger order by first\_name;
+```
+select * from passenger order by first_name;
+```
 
 Извлекаем из таблицы записи по всем колонкам, отфильтрованным по значению имени. Самый базовый пример.
 
 
+```
+select id from passenger order by first_name;
+```
 
-select id from passenger order by first\_name;
-
-Извлекаем из таблицы только _id_, но отсортированные по _first\_name_. Не для всех очевидный фактор: не обязательно извлекать колонку, чтобы сортировать по ней.
+Извлекаем из таблицы только _id_, но отсортированные по _first_name_. Не для всех очевидный фактор: не обязательно извлекать колонку, чтобы сортировать по ней.
 
 
-
-select \* from passenger order by concat(first\_name, last\_name);
+```
+select * from passenger order by concat(first_name, last_name);
+```
 
 Также, как и после _SELECT_, после _ORDER BY_ можно располагать композитные значения. В данном случае – конкатенация значений из двух колонок.
 
 
-
-select \* from passenger order by first\_name desc;
+```
+select * from passenger order by first_name desc;
+```
 
 Сортировка в обратном порядке. Сортировка «по убыванию». Грубо говоря, после каждой указанной сортировки мы можем оставить модификатор:
 
-·      **_ASC_** – не обязательное значение по умолчанию, указывает прямой порядок сортировки сортировки (по возвастанию);
+* **_ASC_** – не обязательное значение по умолчанию, указывает прямой порядок сортировки сортировки (по возвастанию);
 
-·      **_DESC_** – обратный порядок (по убыванию).
+* **_DESC_** – обратный порядок (по убыванию).
 
 
-
-select \* from passenger order by last\_purchase nulls first;
+```
+select * from passenger order by last_purchase nulls first;
+```
 
 Следующий полезный модификатор – указание порядке _null_\-значений по отношению к существующим. По умолчанию, _null_ имеет наименьший приоритет, таким образом записи с _null_ в соответствующей колонке (или результате выражения) буду в самом конце выборки для _ASC_ и в самом начале – для _DESC_.
 
 Но требования к запросу могут требовать иного поведения. В таком случае мы можем явно указать расположение _null_\-значений относительно остальных:
 
-·      **_NULLS FIRST_** – значения с null в условии сортировки будут располагаться в начале выборки. Это поведение по умолчанию для DESC;
+* **_NULLS FIRST_** – значения с null в условии сортировки будут располагаться в начале выборки. Это поведение по умолчанию для DESC;
 
-·      **_NULLS LAST_** – значения с null в условии сортировки будут располагаться в конце. Очевидно, поведение по умолчанию для ASC;
+* **_NULLS LAST_** – значения с null в условии сортировки будут располагаться в конце. Очевидно, поведение по умолчанию для ASC;
 
 
-
-select \* from passenger order by first\_name, last\_name;
+```
+select * from passenger order by first_name, last_name;
+```
 
 Также вполне очевидна актуальность множественной сортировки: сначала сортируем по первому значению, потом – по второму (третьему, десятому) для всех записей, у которых совпало значение предыдущей сортировки.
 
@@ -69,7 +67,9 @@ select \* from passenger order by first\_name, last\_name;
 
 При этом каждая из сортировок может обладать (или не обладать) собственными модификаторами:
 
-select \* from passenger order by first\_name desc, last\_name asc nulls first;
+```
+select * from passenger order by first_name desc, last_name asc nulls first;
+```
 
 Как видите, возможности сортировки данных в SQL достаточно гибкие, но достаточно простые и интуитивно-понятные. По крайней мере, проще, чем в той же Java:)
 
@@ -83,13 +83,16 @@ select \* from passenger order by first\_name desc, last\_name asc nulls first;
 
 Именно такую возможность пагинирования в SQL предоставляют операторы **_LIMIT_** и **_OFFSET_**. Подробнее в примерах (советую добавить в таблицу хотя бы с десяток записей, чтобы результаты запросов были наглядны):
 
-select \* from passenger limit 3;
+```
+select * from passenger limit 3;
+```
 
 Такой запрос лишь ограничивает число выдываемых записей. В данном случае – не больше 3. Задача оператора _LIMIT_ – именно ограничить число записей в выборке.
 
 
-
-select \* from passenger offset 3;
+```
+select * from passenger offset 3;
+```
 
 Оператор _OFFSET_ имеет менее очевидную функциональность – он пропускает указанное число записей. Так, в результате данного запроса в выборку попадут все записи таблицы, кроме первых трех.
 
@@ -97,9 +100,11 @@ select \* from passenger offset 3;
 
 Вместе же эти операторы дают то, с чего мы начали – возможность пагинации:
 
-select \* from passenger limit 3 offset 0;      --  1-3 записи
-select \* from passenger limit 3 offset 3;      --  4-6 записи
-select \* from passenger limit 3 offset 6;      --  7-9 записи
+```
+select * from passenger limit 3 offset 0;      -- 1-3 записи
+select * from passenger limit 3 offset 3;      -- 4-6 записи
+select * from passenger limit 3 offset 6;      -- 7-9 записи
+```
 
 Казалось бы, пагинация работает и все круто. Но при чем тут сортировка?
 
@@ -107,7 +112,9 @@ select \* from passenger limit 3 offset 6;      --  7-9 записи
 
 Поэтому при использовании пагинации рекомендуется использовать сортировку. Даже если у вас нет требований к порядку данных из запроса – всегда можно отсортировать их по значению _id_, например. Вероятно, внешне данные будут казаться не отсортированными, но это гарантирует корректную работу пагинации:
 
-select \* from passenger order by id limit 3 offset 0;
+```
+select * from passenger order by id limit 3 offset 0;
+```
 
 Такой запрос будет медленнее, чем запрос без сортировки. Но это неизбежное зло, если требуется корректный порядок отображения.
 
@@ -115,22 +122,26 @@ select \* from passenger order by id limit 3 offset 0;
 
 Лечится это ровно также: последней сортировкой добавляем сортировку по уникальному полю (обычно _id_):
 
-select \* from passenger order by first\_name, id limit 3 offset 0;
+```
+select * from passenger order by first_name, id limit 3 offset 0;
+```
 
 Вот теперь запрос точно работает корректно:)
 
 Небольшой бонус с демонстрацией порядка блоков фильтрации, сортировки и пагинации.
 
-select \* from passenger
-where last\_purchase is not null
-order by first\_name, id
+```
+select * from passenger
+where last_purchase is not null
+order by first_name, id
 limit 3 offset 0;
+```
 
 Итого: сначала _WHERE_, потом _ORDER BY_. _LIMIT_ и _OFFSET_ – всегда в конце запроса.
 
 С теорией на сегодня все!
 
-![](/file/69fc5d3ad6ab00a586078.png)
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 Переходим к практике:
 
@@ -151,18 +162,3 @@ limit 3 offset 0;
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#f490999795b48091989193869599da9b8693cb8781969e919780c9a691849b8680d1c6c4809bd1c6c4a0919891938695849cd1c6c484959391d1c6c4d1c6c6b0b9b8dad1c6c4d1b0c4d1b5c5d1b0c4d1b6b1d1b0c5d1ccc4d1b0c5d1ccc6d1b0c4d1b6ccd1b0c5d1ccc4d1b0c4d1b6b1d1b0c4d1b6c6d1b0c4d1b6b5d1b0c4d1b6ccd1c6c4d1b0c4d1b6ccd1c6c4d1b0c4d1b6b2d1b0c4d1b6c4d1b0c4d1b6c7d1b0c4d1b6ccd1b0c4d1b6b0d1b0c4d1b6c4d1b0c5d1ccc2d1b0c4d1b6ccd1b0c5d1ccb2d1c6c6d2969b908dc9a691849b86809190d1c6c484959391d1c7b5d1c6c49c80808487d1c7b5d1c6b2d1c6b280919891938695da849cd1c6b2b0b9b8d9a79b86809d869b829f9dd98495939d9a95979d8d95d9c4c3d9c5c1d1c4b5d1c4b5d1c4b5)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1689440605,"pageId":"9170aba060f00d1e37c53","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

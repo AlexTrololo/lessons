@@ -1,132 +1,128 @@
-DML. UNION – Telegraph
-
 DML. UNION
 ==========
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)July 30, 2023
-
-DML. UNION
-
-=============
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 Сегодня рассмотрим возможности SQL по объединению результатов двух самостоятельных запросов. Т.е. Возможность представить строки двух и более таблиц (полученных в результате нескольких запросов) в виде одной объединенной таблицы. Например, в результате запросов, вернувших 10 и 20 строк, в итоге должна получиться одна общая выборка на 30 строк.
 
 Такая функциональность обычно нужна в двух случаях:
 
-1.  Объединение результатов из нескольких разных таблиц. Например, мы недавно создавали таблицы  _passenger\_male_ и _passenger\_female_, которые содержат одинаковые колонки, но разные записи. Такой сценарий относительно редок, но более понятен интуитивно;
-2.  Объединение результата несокльких запросов  к одной таблице, возвращающий два совершенно разных или пересекающихся множества. Как правило, такие запросы можно представить в виде одного запроса, но он может быть менее производительным, нежели два запроса с последующим объединением. Более частый сценарий, но его использование требует некоторых навыков по работе с планом запроса, чтобы понимать, когда два запроса позволят оптимизировать взаимодействие с БД и как именно для этого необходимо разделить изначальный общий запрос.
-
+1. Объединение результатов из нескольких разных таблиц. Например, мы недавно создавали таблицы _passenger_male_ и _passenger_female_, которые содержат одинаковые колонки, но разные записи. Такой сценарий относительно редок, но более понятен интуитивно;
+2. Объединение результата несокльких запросов к одной таблице, возвращающий два совершенно разных или пересекающихся множества. Как правило, такие запросы можно представить в виде одного запроса, но он может быть менее производительным, нежели два запроса с последующим объединением. Более частый сценарий, но его использование требует некоторых навыков по работе с планом запроса, чтобы понимать, когда два запроса позволят оптимизировать взаимодействие с БД и как именно для этого необходимо разделить изначальный общий запрос.
 
 
 Теперь, когда актуальность более-менее понятна, разберемся с синтаксисом.
 
-select \* from passenger\_male
+```
+select * from passenger_male
 union
-select \* from passenger\_female;
+select * from passenger_female;
+```
 
-В данном случае мы берем все колонки и все записи из таблицы _passenger\_male_ и все колонки и все записи из таблицы _passenger\_female_, после чего объединяем их в одну общую выборку.
+В данном случае мы берем все колонки и все записи из таблицы _passenger_male_ и все колонки и все записи из таблицы _passenger_female_, после чего объединяем их в одну общую выборку.
 
 За объединение выборок отвечает оператор **_UNION_**.
 
 Стоит отметить, что для того, чтобы запрос работал, выражения (выбираемые колонки) двух запросов должны совпадать по количеству и типам данных (в порядке перечисления).
 
-Так, если мы попытаемся объединить _passenger\_female_ и _passenger_ \- будет ошибка, потому что первая таблица содержит колонку created, но не содержит колонки male, а вторая - наоборот.
+Так, если мы попытаемся объединить _passenger_female_ и _passenger_ - будет ошибка, потому что первая таблица содержит колонку created, но не содержит колонки male, а вторая - наоборот.
 
-Попробуем доработать запрос, чтобы он возвращал все записи _passenger\_female_  и _passenger_. Не совпадающие колонки просто исключим:
+Попробуем доработать запрос, чтобы он возвращал все записи _passenger_female_ и _passenger_. Не совпадающие колонки просто исключим:
 
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports
-from passenger\_female
+```
+select id, first_name, last_name, birth_date, last_purchase,
+    favorite_airports
+    from passenger_female
 union
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports
-from passenger;
+select id, first_name, last_name, birth_date, last_purchase,
+    favorite_airports
+    from passenger;
+```
 
 В результате можем заметить, что выборка не содержит одинаковых строк, хотя такие есть в исходных таблицах (если исключить отличающиеся колонки).
 
 Чтобы дублирующиеся строки не объединялись - можем использовать другой оператор - **_UNION ALL_**:
 
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports
-from passenger\_female
+```
+select id, first_name, last_name, birth_date, last_purchase,
+    favorite_airports
+    from passenger_female
 union all
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports
-from passenger;
+select id, first_name, last_name, birth_date, last_purchase,
+    favorite_airports
+    from passenger;
+```
 
 Теперь дубликаты дублируются:)
 
-Также мы можем доработать запрос, чтобы он возвращал, например, колонку _male_, которая отсутствует в _passenger\_female_. Очевидно, что все записи в этой таблице относятся к женскому полу, поэтому просто проставим _false_ в качестве значения для этой колонки. И укажем алиас, чтобы имя колонки отображалось корректно в результирующей выборке:
+Также мы можем доработать запрос, чтобы он возвращал, например, колонку _male_, которая отсутствует в _passenger_female_. Очевидно, что все записи в этой таблице относятся к женскому полу, поэтому просто проставим _false_ в качестве значения для этой колонки. И укажем алиас, чтобы имя колонки отображалось корректно в результирующей выборке:
 
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports, false male
-from passenger\_female
+```
+select id, first_name, last_name, birth_date, last_purchase,
+    favorite_airports, false male
+    from passenger_female
 union all
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports, male
-from passenger;
+select id, first_name, last_name, birth_date, last_purchase,
+    favorite_airports, male
+    from passenger;
+```
 
 Как и в обычном SELECT-запросе, для каждого отдельного _SELECT_ мы можем указывать блоки фильтрации, сортировки, группировки, пагинации и т.д.
 
 В целом, на этом можно завершать знакомство с базовым синтаксисом. Но зачастую требуется сделать дополнительные действия с результирующей выборкой - те же сортировка, пагинация, агрегация или даже дополнительная фильтрация. Последнее нежелательно (если речь о _WHERE_, а не _HAVING_), поскольку мы работаем уже с результирующей таблицей, а не изначальными, из-за чего SQL не может использовать базовые инструменты оптимизации для фильтрации (в первую очередь - индексы, с которыми мы познакомимся позже).
 
 
-
 Для того, чтобы получить доступ к этой функциональности - необходимо сделать _SELECT_’ы с _UNION_ в виде подзапроса, а операции над результирующей выборкой вынести в основной запрос.
 
 Рассмотрим на примере пагинации. Вернем первые 3 записи, отсортированных по имени. Не забываем про проблему порядка данных с одинаковыми значениями и дополнительную сортировку по _id_:
 
-select \* from (
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports, false male
-from passenger\_female
-union all
-select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports, male
-from passenger
+```
+select * from (
+    select id, first_name, last_name, birth_date, last_purchase,
+        favorite_airports, false male
+        from passenger_female
+    union all
+    select id, first_name, last_name, birth_date, last_purchase,
+        favorite_airports, male
+        from passenger
 ) p
-order by first\_name, id limit 3 offset 0;
+order by first_name, id limit 3 offset 0;
+```
 
 Такой запрос будет работать корректно, но стоит обратить внимание, что он выбирает все записи в каждой из таблиц, а лишь потом сортирует и пагинирует. Если ваши таблицы содержат миллионы записей - это может оказаться несколько избыточным и может иметь смысл добавить аналогичную сортировку и пагинацию в каждом из SELECT’ов в подзапросе - тогда основной запрос будет работать максимум с _pageSize\*2_ записей, т.е., в нашем случае - с 6 записями. При этом каждый из вложенных SELECT-запросов стоит обернуть в скобки - _UNION_ не испытывает желания применяться после указание _OFFSET_:)
 
-select \* from (
-(select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports, false male
-from passenger\_female
-order by first\_name, id limit 3 offset 0)
-union all
-(select id, first\_name, last\_name, birth\_date, last\_purchase,
-favorite\_airports, male
-from passenger
-order by first\_name, id limit 3 offset 0)
+```
+select * from (
+    (select id, first_name, last_name, birth_date, last_purchase,
+        favorite_airports, false male
+        from passenger_female
+        order by first_name, id limit 3 offset 0)
+    union all
+    (select id, first_name, last_name, birth_date, last_purchase,
+        favorite_airports, male
+        from passenger
+        order by first_name, id limit 3 offset 0)
 ) p
-order by first\_name, id limit 3 offset 0;
+order by first_name, id limit 3 offset 0;
+```
 
 
+В целом, _UNION_ вряд ли будет популярным инструментом в вашей работе, но в ряде задач он не заменим.
 
-В целом, _UNION_ вряд ли будет популярным инструментом в вашей работе, но в ряде задач он не заменим. 
-
-  
 
 С теорией на сегодня все!
 
-![](/file/a51a39f43c53bd6b7d0d7.png)
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 Переходим к практике:
 
 ### Задача 1
 
-Верните все имена и фамилии из таблиц _passenger\_female_, _passenger\_male_ и passenger. Исключите дубликаты (не только возникающие при объединении выборок).
-
+Верните все имена и фамилии из таблиц _passenger_female_, _passenger_male_ и passenger. Исключите дубликаты (не только возникающие при объединении выборок).
 
 
 ### Задача 2
 
-Получите всю информацию о первых трех самых старых пассажиров, имеющих хотя бы один любимый аэропорт, из объединенных таблиц _passenger\_female_, _passenger\_male_. 
+Получите всю информацию о первых трех самых старых пассажиров, имеющих хотя бы один любимый аэропорт, из объединенных таблиц _passenger_female_, _passenger_male_.
 
-  
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
 
@@ -135,18 +131,3 @@ order by first\_name, id limit 3 offset 0;
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#d0b4bdb3b190a4b5bcb5b7a2b1bdfebfa2b7efa3a5b2bab5b3a4ed82b5a0bfa2a4f5e2e0a4bff5e2e084b5bcb5b7a2b1a0b8f5e2e0a0b1b7b5f5e2e0f5e2e2949d9cfef5e2e0859e999f9ef5e2e2f6b2bfb4a9ed82b5a0bfa2a4b5b4f5e2e0a0b1b7b5f5e391f5e2e0b8a4a4a0a3f5e391f5e296f5e296a4b5bcb5b7a2b1fea0b8f5e296949d9cfd859e999f9efde0e7fde3e0f5e091f5e091f5e091)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1690721283,"pageId":"2bcc57d49d6b67bfab459","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

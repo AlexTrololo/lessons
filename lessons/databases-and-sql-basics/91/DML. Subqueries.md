@@ -1,15 +1,6 @@
-DML. Подзапросы – Telegraph
-
 DML. Подзапросы
 ===============
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)July 22, 2023
-
-DML. Подзапросы
-
-==================
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 Мы уже достаточно далеко продвинулись в изучении способов извлечения данных из таблиц. В рамках данной статьи рассмотрим синтаксис **подзапросов**, позволяющий вызвать один запрос внутри другого.
 
@@ -23,8 +14,10 @@ DML. Подзапросы
 
 Например:
 
-select \* from passenger
+```
+select * from passenger
 where id in (select id from passenger where male);
+```
 
 В данном случае происходит получение всех записей из таблицы, в которых _id_ равен одному из значений, полученных из подзапроса. Подзапрос, в свою очередь возвращает _id_ всех пассажиров-мужчин.
 
@@ -34,14 +27,18 @@ where id in (select id from passenger where male);
 
 Вероятно, если вы попытаетесь это сделать, получится примерно следующее:
 
-select id from passenger having max(birth\_date) = birth\_date;
+```
+select id from passenger having max(birth_date) = birth_date;
+```
 
-Но проблема в том, что мы не можем использовать в этом запросе _id_ и _birth\_date_, не добавив их в блок _GROUP BY_. А если добавить – получим список всех _id_ в таблице – ведь сначала будет произведена группировка по этим колонкам, а потом уже для каждой группы будет выбрана максимальная дата рождения (которая и так всего одна в каждой из групп – мы ведь по ней только что сгруппировали).
+Но проблема в том, что мы не можем использовать в этом запросе _id_ и _birth_date_, не добавив их в блок _GROUP BY_. А если добавить – получим список всех _id_ в таблице – ведь сначала будет произведена группировка по этим колонкам, а потом уже для каждой группы будет выбрана максимальная дата рождения (которая и так всего одна в каждой из групп – мы ведь по ней только что сгруппировали).
 
 Зато с использованием подзапроса мы можем сделать примерно следующее:
 
+```
 select id from passenger
-where birth\_date = (select max(birth\_date) from passenger);
+where birth_date = (select max(birth_date) from passenger);
+```
 
 Кроме того, внутри подзапроса мы можем обращаться к таблице или выражениям из внешнего запроса. Как правило, с использованием алиасов, чтобы избежать двойственности восприятия (например, когда основной запрос и подзапрос обращаются к одной и той же таблице).
 
@@ -49,28 +46,32 @@ where birth\_date = (select max(birth\_date) from passenger);
 
 Итак, попытаемся извлечь _id_ пассажиров-мужчин, чья дата рождения совпадает с максимальной, среди всех пассажиров-мужчин:
 
+```
 select p.id from passenger p
-where male and p.birth\_date = (
-select max(birth\_date) from passenger where male = p.male
+where male and p.birth_date = (
+    select max(birth_date) from passenger where male = p.male
 );
+```
 
 В данном случае мы делаем фильтрацию по полу в основном запросе (оставляем только мужчин), после чего в подзапросе ищем максимальную дату рождения среди пассажиров-мужчин и фильтруем основную выборку по совпадению с этой датой.
 
 И, наконец, мы, безусловно, можем использовать подзапросы внутри подзапросов. Пример снова утрированный, призванный продемонстрировать синтаксис:
 
-select \* from passenger
-where id in (
-select id from passenger
-where male and id in (
-select id from passenger where birth\_date < '2000-01-01'
-)
+```
+select * from passenger
+    where id in (
+    select id from passenger
+    where male and id in (
+        select id from passenger where birth_date < '2000-01-01'
+    )
 );
+```
 
 Также могут использоваться несколько не связанных между собой запросов. Например, несколько разных WHERE-условий в основном запросе будут использовать собственные подзапросы. Но этот факт, полагаю, очевиден.
 
 Последние два сценария делают запрос более сложным и тяжелым для восприятия. Через несколько уроков мы познакомимся с **Common Table Expressions** и оператором **_WITH_**, который позволит вернуть подобным запросам читабельность. Хотя бы отчасти.
 
-#### Подзапросы в операторах фильтрации
+### Подзапросы в операторах фильтрации
 
 В рамках примеров выше можно увидеть, что подзапрос, в общем-то, может быть применен к любому оператору фильтрации. Но большинство из них будут ожидать, что подзапрос вернет единственное значение. Некоторые же (из знакомых нам – _IN_) способны работать и с большим числом значений. К тому же, на данном этапе подобные подзапросы сохраняют другое ограничение – из них должна возвращаться таблица с единственной колонкой.
 
@@ -80,15 +81,19 @@ select id from passenger where birth\_date < '2000-01-01'
 
 Другой способ использования подзапросов заключается в том, что результирующая выборка основного запроса строится не на основании таблицы, а на базе выборки другого (вложенного) запроса:
 
-select \* from (select \* from passenger where male) p
-where birth\_date > '1970-01-01';
+```
+select * from (select * from passenger where male) p
+where birth_date > '1970-01-01';
+```
 
 В данном случае мы делаем выборку пассажиров, родившихся после 01.01.1970, из результатов (выборки) подзапроса, который возвращает всех пассажиров-мужчин. Обратите внимание, при таком использовании мы обязаны использовать алиас для обозначения результатов подзапроса.
 
 Подобный подход позволяет, в том числе, эмулировать вызов агрегатной функции внутри другой агрегатной функции. Точнее, агрегировать уже агрегированные данные:
 
+```
 select max(p.count)
-from (select count(\*) count, male from passenger group by male) p;
+from (select count(*) count, male from passenger group by male) p;
+```
 
 В данном случае мы получаем максимально число пассажиров одного пола.
 
@@ -104,7 +109,7 @@ from (select count(\*) count, male from passenger group by male) p;
 
 С теорией на сегодня все!
 
-![](/file/79e738034523fa88da16a.png)
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 Переходим к практике:
 
@@ -116,7 +121,7 @@ from (select count(\*) count, male from passenger group by male) p;
 
 ### Задача 2
 
-Найти топ-3 аэропорта, которые являются самыми популярными среди пассажиров (с наибольшим количеством упоминаний в столбце _favorite\_airports_).
+Найти топ-3 аэропорта, которые являются самыми популярными среди пассажиров (с наибольшим количеством упоминаний в столбце _favorite_airports_).
 
 Для получения набора единичных элементов из массива существует агрегатная функция **_unnest()_**.
 
@@ -126,12 +131,11 @@ from (select count(\*) count, male from passenger group by male) p;
 
 Пример вывода:
 
-Male     |     Female
-
-\-------------------------
-
-5       |       7
-
+```
+Male | Female
+-------------
+5    | 7
+```
 
 
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
@@ -141,18 +145,3 @@ Male     |     Female
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#a9cdc4cac8e9ddccc5cccedbc8c487c6dbce96dadccbc3cccadd94fbccd9c6dbdd8c9b99ddc68c9b99fdccc5cccedbc8d9c18c9b99d9c8cecc8c9b998c9b9bede4e5878c9b998ced998c90ef8ced998cebec8ced998ceb9d8ced998ceb9e8ced998ceb998ced998cebef8ced988c91998ced998cebec8ced988c91988ced988c91eb8c9b9b8fcbc6cdd094fbccd9c6dbddcccd8c9b99d9c8cecc8c9ae88c9b99c1ddddd9da8c9ae88c9bef8c9befddccc5cccedbc887d9c18c9befede4e584f9c6cdd3c8d9dbc6dad084999e849b9b8c99e88c99e88c99e8)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1690036068,"pageId":"b89bcaea09e719e29a13e","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();

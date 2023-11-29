@@ -1,15 +1,6 @@
-DML. INSERT – Telegraph
-
 DML. INSERT
 ===========
 
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)July 02, 2023
-
-DML. INSERT
-
-==============
-
-[Дорогу осилит идущий](https://t.me/ViamSupervadetVadens)
 
 Сегодняшняя статья будет разбита на две части. В первой мы создадим таблицу – одну из нескольких, которая будет в тестовой БД. Вторая же будет обзорной и посвящена, собственно, SQL-оператору **_INSERT_**.
 
@@ -21,15 +12,17 @@ DML. INSERT
 
 Собственно, запрос на создание таблицы:
 
+```
 create table passenger (
-id                  bigserial,
-first\_name          varchar(100),
-last\_name           varchar(100),
-birth\_date          date,
-male                boolean         default true,
-last\_purchase       timestamp,
-favorite\_airports   text\[\]
+    id                  bigserial,
+    first_name          varchar(100),
+    last_name           varchar(100),
+    birth_date          date,
+    male                boolean         default true,
+    last_purchase       timestamp,
+    favorite_airports   text[]
 );
+```
 
 > Если вы работаете через графический интерфейс - потребуется не только написать, но и запустить запрос. Обычно – зеленый (или не зеленый) треугольник. Если в редакторе написано более одного запроса – выделите нужный и лишь затем нажимайте на кнопку запуска.
 
@@ -43,7 +36,9 @@ favorite\_airports   text\[\]
 
 SQL же не имеет зависимости от регистра, поэтому в запросах можно писать операторы, а также названия (таблиц, колонок и т.д.) в любом удобном вам виде. Традиционно, рекомендуется писать операторы заглавными буквами, а имена – строчными:
 
+```
 CREATE TABLE passenger …
+```
 
 Де-факто, эти рекомендации не всегда соблюдаются и, как правило, в рамках реальных проектов команда руководствуется внутренними договоренностями. Я, например, предпочитаю писать целиком в нижнем регистре, поэтому в примерах будет именно так:)
 
@@ -60,53 +55,54 @@ CREATE TABLE passenger …
 Возможно, более простыми будут примеры здесь (но и более сложная структура таблицы): [https://metanit.com/sql/postgresql/3.1.php](https://metanit.com/sql/postgresql/3.1.php)
 
 
-
 Что нужно отметить:
 
-·      Общая форма запроса выглядит как
+* Общая форма запроса выглядит как
 
+```
 insert into \*имя таблицы\* (\*список колонок, куда добавляем данные\*) values
-(\*набор значений первой записи, для колонок в заданном порядке\*),
-…
-(\*набор значений n-й записи, для колонок в заданном порядке\*);
+    (\*набор значений первой записи, для колонок в заданном порядке\*),
+    …
+    (\*набор значений n-й записи, для колонок в заданном порядке\*);
+```
 
 Пример:
 
-insert into passenger (id, first\_name, last\_name, birth\_date, male, last\_purchase, favorite\_airports) values
+```
+insert into passenger (id, first_name, last_name, birth_date, male, last_purchase, favorite_airports) values
 (1, 'Ivan', 'Ivanov', '02-07-1990', true, null, null),
 (2, 'Petr', 'Petrov', '02-07-1991', true, '02-07-2023 20:32:00', '{"Minsk", "Kyiv"}');
+```
 
+* Если для вставки используются все колонки таблицы без изменения их порядка (как в таблице, так и при вставке), _(\*список колонок, куда добавляем данные\*)_ можно опустить:
 
-
-·      Если для вставки используются все колонки таблицы без изменения их порядка (как в таблице, так и при вставке), _(\*список колонок, куда добавляем данные\*)_ можно опустить:
-
+```
 insert into passenger values
 (3, 'Anna', 'Annina', '02-07-1993', false, null, null);
+```
 
 
+* Также можно в разных форматах использовать значение по умолчанию: пропускать его в перечислении добавляемых колонок или указывать в явном виде с помощью ключевого слова _DEFAULT_;
 
-·      Также можно в разных форматах использовать значение по умолчанию: пропускать его в перечислении добавляемых колонок или указывать в явном виде с помощью ключевого слова _DEFAULT_;
-
-·      Если значение по умолчанию не задано для колонки – таким значением будет _null_.
+* Если значение по умолчанию не задано для колонки – таким значением будет _null_.
 
 > Обратите внимание на форму записи для значений типа массив: одинарные кавычки, элементы внутри **{}**, сами строковые значения в двойных кавычках (а не одинарных, как обычно бывает у строк в SQL). При этом для массива чисел, например, кавычки вокруг каждого элемента не нужны: **'{1, 2, 3}'**.
-
 
 
 Отдельно отмечу, что добавление записей возможно и через графический редактор (как правило – двойной щелчок по таблице, дальше будет понятно). Это, обычно, неудобно для множественной вставки, но для одиночных – вполне. Однако, в рамках изучения именно SQL рекомендую максимально сосредоточиться на консоли.
 
 
-
 Также, в качестве приятного бонуса вне основной темы урока: если при работе с типами даты и/или времени вам нужно текущее значение – вы можете воспользоваться функцией _now()_:
 
+```
 insert into passenger values
 (3, 'Anna', 'Annina', '02-07-1993', false, now(), null);
-
+```
 
 
 С теорией на сегодня все!
 
-![](/file/0915e1c394186335d38fa.png)
+![end_of_the_lesson2.png](..%2F..%2F..%2Ffile%2Fend_of_the_lesson2.png)
 
 Переходим к практике:
 
@@ -123,7 +119,6 @@ insert into passenger values
 Добавьте семью из двух родителей и двух детей. Глава семейства как раз купил билеты на всю семью (вот прям только что, прямо сейчас). Обычно они вылетают из Ростова.
 
 
-
 Если что-то непонятно или не получается – welcome в комменты к посту или в лс:)
 
 Канал: [https://t.me/ViamSupervadetVadens](https://t.me/ViamSupervadetVadens)
@@ -131,18 +126,3 @@ insert into passenger values
 Мой тг: [https://t.me/ironicMotherfucker](https://t.me/ironicMotherfucker)
 
 _Дорогу осилит идущий!_
-
-EditPublish
-
-Report content on this page
-
-Report Page
------------
-
-Violence Child Abuse  Copyright  Illegal Drugs  Personal Details  Other
-
-Please submit your DMCA takedown request to [\[email protected\]](/cdn-cgi/l/email-protection#cfaba2acae8fbbaaa3aaa8bdaea2e1a0bda8f0bcbaada5aaacbbf29daabfa0bdbbeafdffbba0eafdff9baaa3aaa8bdaebfa7eafdffbfaea8aaeafdffeafdfd8b8283e1eafdff86819c8a9d9beafdfde9ada0abb6f29daabfa0bdbbaaabeafdffbfaea8aaeafc8eeafdffa7bbbbbfbceafc8eeafd89eafd89bbaaa3aaa8bdaee1bfa7eafd898b8283e286819c8a9d9be2fff8e2fffdeaff8eeaff8eeaff8e)
-
-Cancel Report
-
-var T={"apiUrl":"https:\\/\\/edit.telegra.ph","datetime":1688316659,"pageId":"ab5b3b2e08c0ae9e57bb5","editable":true};(function(){var b=document.querySelector('time');if(b&&T.datetime){var a=new Date(1E3\*T.datetime),d='January February March April May June July August September October November December'.split(' ')\[a.getMonth()\],c=a.getDate();b.innerText=d+' '+(10>c?'0':'')+c+', '+a.getFullYear()}})();
